@@ -35,18 +35,18 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 w-full z-40 transition-all duration-500 glass-nav ${scrolled ? 'py-3' : 'py-5'}`}>
+      <nav className={`absolute md:fixed top-0 left-0 w-full z-40 transition-all duration-500 glass-nav py-3.5 md:py-5 ${scrolled ? 'md:py-3' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2.5 group">
               <img 
                 src="/logo.png" 
                 alt="Project Studio Logo" 
-                className={`object-cover rounded border border-gold/30 group-hover:border-gold transition-all duration-500 shadow-md ${scrolled ? 'w-16 h-16' : 'w-20 h-20'}`} 
+                className={`object-cover rounded border border-gold/30 group-hover:border-gold transition-all duration-500 shadow-md w-16 h-16 md:w-20 md:h-20 ${scrolled ? 'md:w-16 md:h-16' : ''}`} 
               />
               <div className="flex flex-col">
-                <span className={`font-heading font-bold tracking-widest text-grey transition-all duration-500 ${scrolled ? 'text-lg' : 'text-xl'}`}>PROJECT STUDIO</span>
-                <span className={`uppercase tracking-[0.25em] text-gold font-poppins transition-all duration-500 ${scrolled ? 'text-[8px]' : 'text-[9px]'}`}>Premium Interiors</span>
+                <span className={`font-heading font-bold tracking-widest text-grey transition-all duration-500 text-lg md:text-xl ${scrolled ? 'md:text-lg' : ''}`}>PROJECT STUDIO</span>
+                <span className={`uppercase tracking-[0.25em] text-gold font-poppins transition-all duration-500 text-[8px] md:text-[9px] ${scrolled ? 'md:text-[8px]' : ''}`}>Premium Interiors</span>
               </div>
             </Link>
 
