@@ -25,7 +25,7 @@ export default function Contact() {
   };
 
   const handleSendToWhatsApp = (selectedNumber: string) => {
-    const textMessage = `Hi Project Studio,\n\nName: ${formData.name}\nPhone: ${formData.phone}\nEmail: ${formData.email}\nService Interested: ${formData.service}\nMessage: ${formData.message}`;
+    const textMessage = `Hi VC Project Studio,\n\nName: ${formData.name}\nPhone: ${formData.phone}\nEmail: ${formData.email}\nService Interested: ${formData.service}\nMessage: ${formData.message}`;
     const url = `https://wa.me/${selectedNumber}?text=${encodeURIComponent(textMessage)}`;
 
     // Store in local storage
@@ -148,7 +148,7 @@ export default function Contact() {
                 Call Office
               </a>
               <a 
-                href="https://wa.me/916305093192?text=Hi%20Project%20Studio%2C%20I%20would%20like%20to%20get%20a%20quote%20for%20my%20home%20interiors."
+                href="https://wa.me/916305093192?text=Hi%20VC%20Project%20Studio%2C%20I%20would%20like%20to%20get%20a%20quote%20for%20my%20home%20interiors."
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center justify-center gap-2 py-3 bg-[#25D366] hover:bg-[#20ba59] text-white font-semibold uppercase text-xs rounded transition-all tracking-wider text-center"

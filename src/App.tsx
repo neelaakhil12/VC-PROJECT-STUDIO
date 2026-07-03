@@ -83,8 +83,8 @@ export default function App() {
             {showWaSelect && (
               <div className="absolute right-0 bottom-14 bg-black border border-gold/30 rounded-lg p-3 shadow-2xl flex flex-col gap-2 min-w-[200px] z-50 animate-fade-in text-white">
                 <p className="text-[10px] uppercase tracking-wider text-gold font-poppins font-semibold mb-1 border-b border-grey/25 pb-1">Select WhatsApp Chat:</p>
-                <a 
-                  href="https://wa.me/916305093192?text=Hi%20Project%20Studio%2C%20I%20would%20like%20to%20book%20a%20consultation%20for%20my%20home%20interiors."
+                 <a 
+                  href="https://wa.me/916305093192?text=Hi%20VC%20Project%20Studio%2C%20I%20would%20like%20to%20book%20a%20consultation%20for%20my%20home%20interiors."
                   target="_blank"
                   rel="noreferrer"
                   onClick={() => setShowWaSelect(false)}
@@ -94,7 +94,7 @@ export default function App() {
                   <span>+91 63050 93192</span>
                 </a>
                 <a 
-                  href="https://wa.me/917660994433?text=Hi%20Project%20Studio%2C%20I%20would%20like%20to%20book%20a%20consultation%20for%20my%20home%20interiors."
+                  href="https://wa.me/917660994433?text=Hi%20VC%20Project%20Studio%2C%20I%20would%20like%20to%20book%20a%20consultation%20for%20my%20home%20interiors."
                   target="_blank"
                   rel="noreferrer"
                   onClick={() => setShowWaSelect(false)}
