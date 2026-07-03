@@ -23,11 +23,7 @@ export default function Home({ onOpenConsultation, splashDone = false }: HomePro
   const [phase, setPhase] = useState<'typing' | 'pause' | 'erasing' | 'restart'>('typing');
   const [showCursor, setShowCursor] = useState(true);
 
-  // Typewriter state — subtitle
   const subText = 'Transform your home with premium modular designs and expert styling, tailored to your budget.';
-  const [subCount, setSubCount] = useState(0);
-  const [subPhase, setSubPhase] = useState<'typing' | 'pause' | 'erasing' | 'wait'>('wait');
-  const [showSubCursor, setShowSubCursor] = useState(true);
 
   // Counters state
   const [projectCount, setProjectCount] = useState(0);
@@ -44,10 +40,9 @@ export default function Home({ onOpenConsultation, splashDone = false }: HomePro
       if (typedCount < fullText.length) {
         t = setTimeout(() => setTypedCount(c => c + 1), 60);
       } else {
-        // Finished typing → pause, and trigger subtitle start
+        // Finished typing → pause
         t = setTimeout(() => {
           setPhase('pause');
-          setSubPhase(sp => sp === 'wait' ? 'typing' : sp); // kick off subtitle on first cycle
         }, 1800);
       }
     } else if (phase === 'pause') {
@@ -63,35 +58,10 @@ export default function Home({ onOpenConsultation, splashDone = false }: HomePro
     return () => clearTimeout(t);
   }, [typedCount, phase, splashDone]);
 
-  // Subtitle typewriter loop
-  useEffect(() => {
-    if (subPhase === 'wait') return;
-    let t: ReturnType<typeof setTimeout>;
-
-    if (subPhase === 'typing') {
-      if (subCount < subText.length) {
-        t = setTimeout(() => setSubCount(c => c + 1), 40);
-      } else {
-        t = setTimeout(() => setSubPhase('pause'), 2000);
-      }
-    } else if (subPhase === 'pause') {
-      t = setTimeout(() => setSubPhase('erasing'), 0);
-    } else if (subPhase === 'erasing') {
-      if (subCount > 0) {
-        t = setTimeout(() => setSubCount(c => c - 1), 20);
-      } else {
-        t = setTimeout(() => setSubPhase('typing'), 400);
-      }
-    }
-
-    return () => clearTimeout(t);
-  }, [subCount, subPhase]);
-
-  // Blinking cursors
+  // Blinking cursor for heading
   useEffect(() => {
     const cursor = setInterval(() => {
       setShowCursor(v => !v);
-      setShowSubCursor(v => !v);
     }, 530);
     return () => clearInterval(cursor);
   }, []);
@@ -272,11 +242,8 @@ export default function Home({ onOpenConsultation, splashDone = false }: HomePro
               );
             })()}
           </h1>
-          <p className="text-white text-xs sm:text-lg md:text-xl font-light max-w-xl mx-auto mb-10 leading-relaxed text-shadow-premium font-semibold min-h-[3rem]">
-            {subText.substring(0, subCount)}
-            {subPhase !== 'wait' && (
-              <span className={`inline-block w-[2px] h-[1em] bg-white align-middle ml-0.5 ${showSubCursor ? 'opacity-100' : 'opacity-0'}`} />
-            )}
+          <p className="text-white text-xs sm:text-lg md:text-xl font-light max-w-xl mx-auto mb-10 leading-relaxed text-shadow-premium font-semibold">
+            {subText}
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-4">
