@@ -133,8 +133,8 @@ export default function ConsultationModal({ isOpen, onClose }: ConsultationModal
                   value={formData.service}
                   onChange={e => setFormData({ ...formData, service: e.target.value })}
                 >
-                  <option value="Modular Solutions">Custom Modular Solutions & Carpentry</option>
-                  <option value="Turnkey Execution">Turnkey Execution (Civil, Ceiling, Electrical)</option>
+                  <option value="Modular Solutions">Modular Kitchen & Carpentry</option>
+                  <option value="Turnkey Execution">Turnkey Civil & Execution</option>
                   <option value="Styling Decor">Styling & Decor Consultation</option>
                   <option value="Complete Home Interior">Complete Home Interior</option>
                 </select>
