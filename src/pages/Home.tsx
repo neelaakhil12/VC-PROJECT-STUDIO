@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ShieldCheck, Heart, Award, ArrowRightCircle, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Heart, Award, ArrowRightCircle, Star } from 'lucide-react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
@@ -236,21 +236,7 @@ export default function Home({ onOpenConsultation, splashDone = false }: HomePro
     }
   ];
 
-  const scrollRef = useRef<HTMLDivElement | null>(null);
 
-  const scrollLeft = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -350, behavior: 'smooth' });
-    }
-  };
-
-  const scrollRight = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 350, behavior: 'smooth' });
-    }
-  };
-
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
 
   return (
     <div className="relative">
