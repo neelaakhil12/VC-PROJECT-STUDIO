@@ -105,6 +105,53 @@ export default function Story() {
         </div>
       </section>
 
+      {/* WHY CHOOSE US SECTION */}
+      <section className="py-24 bg-white border-b border-grey/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-16" data-aos="fade-up">
+            <span className="text-gold text-xs uppercase tracking-[0.25em] font-semibold font-poppins">Our Advantages</span>
+            <h2 className="text-3xl sm:text-4xl font-heading text-black font-semibold mt-2">Why Choose Project Studio?</h2>
+            <p className="text-grey-dark text-xs sm:text-sm font-light mt-3 leading-relaxed">
+              We stand apart by delivering factory-precision finish and transparent pricing without the heavy premium overheads.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="p-6 bg-offwhite border border-grey/10 rounded space-y-4 hover:border-gold/30 hover:-translate-y-1 transition-all duration-300" data-aos="fade-up">
+              <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold font-bold">1</div>
+              <h3 className="text-lg font-heading font-semibold text-black">Direct Factory Pricing</h3>
+              <p className="text-grey-dark text-xs sm:text-sm font-light leading-relaxed">
+                By manufacturing in our own advanced facility, we bypass heavy retail markups and agent commissions, saving you up to 30%.
+              </p>
+            </div>
+
+            <div className="p-6 bg-offwhite border border-grey/10 rounded space-y-4 hover:border-gold/30 hover:-translate-y-1 transition-all duration-300" data-aos="fade-up" data-aos-delay="100">
+              <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold font-bold">2</div>
+              <h3 className="text-lg font-heading font-semibold text-black">No Material Swapping</h3>
+              <p className="text-grey-dark text-xs sm:text-sm font-light leading-relaxed">
+                Complete transparency. We use standard calibrated plywood and branded laminates with open factory inspection visits allowed anytime.
+              </p>
+            </div>
+
+            <div className="p-6 bg-offwhite border border-grey/10 rounded space-y-4 hover:border-gold/30 hover:-translate-y-1 transition-all duration-300" data-aos="fade-up" data-aos-delay="200">
+              <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold font-bold">3</div>
+              <h3 className="text-lg font-heading font-semibold text-black">Precision Engineering</h3>
+              <p className="text-grey-dark text-xs sm:text-sm font-light leading-relaxed">
+                Our automated CNC hot-press lamination and computerized edge-banding machines deliver absolute millimeter precision.
+              </p>
+            </div>
+
+            <div className="p-6 bg-offwhite border border-grey/10 rounded space-y-4 hover:border-gold/30 hover:-translate-y-1 transition-all duration-300" data-aos="fade-up" data-aos-delay="300">
+              <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold font-bold">4</div>
+              <h3 className="text-lg font-heading font-semibold text-black">Turnkey Accountability</h3>
+              <p className="text-grey-dark text-xs sm:text-sm font-light leading-relaxed">
+                From basic civil modifications, false ceilings, electrical rewiring to post-cleaning and final styling, we own the whole journey.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Core Values Section */}
       <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-16" data-aos="fade-up">
