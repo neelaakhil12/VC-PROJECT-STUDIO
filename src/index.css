@@ -79,11 +79,28 @@
   }
 }
 
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@utility animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+}
+
+@utility pause-hover {
+  &:hover {
+    animation-play-state: paused;
+  }
+}
+
 @utility glass-nav {
-  background: rgba(18, 18, 18, 0.9);
+  background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(192, 194, 199, 0.15);
+  border-bottom: 1px solid rgba(192, 160, 80, 0.25);
 }
 
 @utility glass-card {

@@ -118,6 +118,15 @@ export default function Projects() {
   
   // Before & After comparison slider state
   const [sliderPosition, setSliderPosition] = useState(50);
+  const [sliderPosition2, setSliderPosition2] = useState(50);
+  const [sliderPosition3, setSliderPosition3] = useState(50);
+  const [sliderPosition4, setSliderPosition4] = useState(50);
+  const [sliderPosition5, setSliderPosition5] = useState(50);
+  const [sliderPosition6, setSliderPosition6] = useState(50);
+  const [sliderPosition7, setSliderPosition7] = useState(50);
+  const [sliderPosition8, setSliderPosition8] = useState(50);
+  const [sliderPosition9, setSliderPosition9] = useState(50);
+  const [sliderPosition10, setSliderPosition10] = useState(50);
   
   // Lightbox state
   const [activeImgIdx, setActiveImgIdx] = useState<number | null>(null);
@@ -125,22 +134,29 @@ export default function Projects() {
 
 
   useEffect(() => {
-    AOS.init({ duration: 1000, once: true });
+    AOS.init({ duration: 1000, once: false });
     loadProjects();
   }, []);
 
+  useEffect(() => {
+    AOS.refresh();
+  }, [projects, filter]);
+
   const loadProjects = () => {
+    let loaded = [...defaultProjects];
     const saved = localStorage.getItem('custom_projects');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        setProjects([...defaultProjects, ...parsed]);
+        if (Array.isArray(parsed)) {
+          loaded = [...loaded, ...parsed];
+        }
       } catch (e) {
-        setProjects(defaultProjects);
+        console.error("Error parsing custom projects:", e);
       }
-    } else {
-      setProjects(defaultProjects);
     }
+    console.log("Loaded projects count:", loaded.length, loaded);
+    setProjects(loaded);
   };
 
 
@@ -193,65 +209,175 @@ export default function Projects() {
         <div className="mb-24 space-y-8" data-aos="fade-up">
           <div className="text-center">
             <span className="text-gold text-xs uppercase tracking-[0.25em] font-semibold font-poppins">Transformation Quality</span>
-            <h2 className="text-2xl sm:text-3xl font-heading text-black font-semibold mt-1">Before & After Showcase</h2>
+            <h2 className="text-2xl sm:text-3xl font-heading text-black font-semibold mt-1">Before &amp; After Showcase</h2>
             <p className="text-grey-dark text-xs sm:text-sm font-light max-w-md mx-auto mt-2">
-              Drag the divider slider to see the structural transformation from a raw concrete workspace to completed premium luxury.
+              Drag the divider slider to see the structural transformation from a raw workspace to completed premium luxury.
             </p>
           </div>
 
-          {/* Interactive slider block */}
-          <div className="relative max-w-4xl mx-auto h-[350px] sm:h-[480px] rounded overflow-hidden shadow-2xl border border-grey/25 select-none">
-            {/* After Image (Full width background) */}
-            <img 
-              src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80" 
-              alt="After Finished luxury"
-              className="absolute inset-0 w-full h-full object-cover"
-              draggable="false"
-            />
-            <div className="absolute bottom-4 right-4 bg-gold/90 text-black px-4 py-1.5 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20 shadow">
-              After (Completed)
-            </div>
+          {/* Three sliders */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-            {/* Before Image (Width-clipped overlay) */}
-            <div 
-              className="absolute inset-y-0 left-0 overflow-hidden" 
-              style={{ width: `${sliderPosition}%` }}
-            >
-              <img 
-                src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80" // Raw construction site
-                alt="Before construction"
-                className="absolute inset-y-0 left-0 w-full h-full object-cover max-w-none grayscale"
-                style={{ width: '100vw', height: '100%' }}
-                draggable="false"
-              />
-              <div className="absolute bottom-4 left-4 bg-black/90 text-white px-4 py-1.5 border border-grey/50 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20 shadow">
-                Before (Raw Site)
+            {/* Slider 1 */}
+            <div data-aos="fade-up" className="relative h-[300px] sm:h-[400px] rounded overflow-hidden shadow-2xl border border-grey/25 select-none">
+              <img src="/after-work-2.png" alt="After" className="absolute inset-0 w-full h-full object-cover" draggable="false" loading="lazy" decoding="async" />
+              <div className="absolute bottom-4 right-4 bg-gold/90 text-black px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">After</div>
+              <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${sliderPosition}%` }}>
+                <img src="/before-work-2.png" alt="Before" className="absolute inset-y-0 left-0 h-full object-cover" style={{ width: '100vw' }} draggable="false" loading="lazy" decoding="async" />
+                <div className="absolute bottom-4 left-4 bg-black/90 text-white px-3 py-1 border border-grey/50 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">Before</div>
               </div>
-            </div>
-
-            {/* Range Input Control overlay */}
-            <input 
-              type="range" 
-              min="0" 
-              max="100" 
-              value={sliderPosition} 
-              onChange={e => setSliderPosition(Number(e.target.value))}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" 
-            />
-
-            {/* Slider bar overlay line */}
-            <div 
-              className="absolute inset-y-0 w-1 bg-gold z-20 pointer-events-none"
-              style={{ left: `${sliderPosition}%` }}
-            >
-              {/* handle knob */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold border border-black flex items-center justify-center shadow-lg">
-                <div className="flex gap-0.5">
-                  <div className="w-[1.5px] h-3.5 bg-black" />
-                  <div className="w-[1.5px] h-3.5 bg-black" />
+              <input type="range" min="0" max="100" value={sliderPosition} onChange={e => setSliderPosition(Number(e.target.value))} className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" />
+              <div className="absolute inset-y-0 w-1 bg-gold z-20 pointer-events-none" style={{ left: `${sliderPosition}%` }}>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold border border-black flex items-center justify-center shadow-lg">
+                  <div className="flex gap-0.5"><div className="w-[1.5px] h-3.5 bg-black" /><div className="w-[1.5px] h-3.5 bg-black" /></div>
                 </div>
               </div>
             </div>
+
+            {/* Slider 2 */}
+            <div data-aos="fade-up" className="relative h-[300px] sm:h-[400px] rounded overflow-hidden shadow-2xl border border-grey/25 select-none">
+              <img src="/after-work-3.png" alt="After" className="absolute inset-0 w-full h-full object-cover" draggable="false" loading="lazy" decoding="async" />
+              <div className="absolute bottom-4 right-4 bg-gold/90 text-black px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">After</div>
+              <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${sliderPosition2}%` }}>
+                <img src="/before-work-3.png" alt="Before" className="absolute inset-y-0 left-0 h-full object-cover" style={{ width: '100vw' }} draggable="false" loading="lazy" decoding="async" />
+                <div className="absolute bottom-4 left-4 bg-black/90 text-white px-3 py-1 border border-grey/50 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">Before</div>
+              </div>
+              <input type="range" min="0" max="100" value={sliderPosition2} onChange={e => setSliderPosition2(Number(e.target.value))} className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" />
+              <div className="absolute inset-y-0 w-1 bg-gold z-20 pointer-events-none" style={{ left: `${sliderPosition2}%` }}>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold border border-black flex items-center justify-center shadow-lg">
+                  <div className="flex gap-0.5"><div className="w-[1.5px] h-3.5 bg-black" /><div className="w-[1.5px] h-3.5 bg-black" /></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Slider 3 */}
+            <div data-aos="fade-up" className="relative h-[300px] sm:h-[400px] rounded overflow-hidden shadow-2xl border border-grey/25 select-none">
+              <img src="/after-work.png" alt="After" className="absolute inset-0 w-full h-full object-cover" draggable="false" loading="lazy" decoding="async" />
+              <div className="absolute bottom-4 right-4 bg-gold/90 text-black px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">After</div>
+              <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${sliderPosition3}%` }}>
+                <img src="/before-work.png" alt="Before" className="absolute inset-y-0 left-0 h-full object-cover" style={{ width: '100vw' }} draggable="false" loading="lazy" decoding="async" />
+                <div className="absolute bottom-4 left-4 bg-black/90 text-white px-3 py-1 border border-grey/50 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">Before</div>
+              </div>
+              <input type="range" min="0" max="100" value={sliderPosition3} onChange={e => setSliderPosition3(Number(e.target.value))} className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" />
+              <div className="absolute inset-y-0 w-1 bg-gold z-20 pointer-events-none" style={{ left: `${sliderPosition3}%` }}>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold border border-black flex items-center justify-center shadow-lg">
+                  <div className="flex gap-0.5"><div className="w-[1.5px] h-3.5 bg-black" /><div className="w-[1.5px] h-3.5 bg-black" /></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Slider 4 - Project D */}
+            <div data-aos="fade-up" className="relative h-[300px] sm:h-[400px] rounded overflow-hidden shadow-2xl border border-grey/25 select-none">
+              <img src="/after-work-4.png" alt="After" className="absolute inset-0 w-full h-full object-cover" draggable="false" loading="lazy" decoding="async" />
+              <div className="absolute bottom-4 right-4 bg-gold/90 text-black px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">After</div>
+              <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${sliderPosition4}%` }}>
+                <img src="/before-work-4.png" alt="Before" className="absolute inset-y-0 left-0 h-full object-cover" style={{ width: '100vw' }} draggable="false" loading="lazy" decoding="async" />
+                <div className="absolute bottom-4 left-4 bg-black/90 text-white px-3 py-1 border border-grey/50 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">Before</div>
+              </div>
+              <input type="range" min="0" max="100" value={sliderPosition4} onChange={e => setSliderPosition4(Number(e.target.value))} className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" />
+              <div className="absolute inset-y-0 w-1 bg-gold z-20 pointer-events-none" style={{ left: `${sliderPosition4}%` }}>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold border border-black flex items-center justify-center shadow-lg">
+                  <div className="flex gap-0.5"><div className="w-[1.5px] h-3.5 bg-black" /><div className="w-[1.5px] h-3.5 bg-black" /></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Slider 5 - Project E */}
+            <div data-aos="fade-up" className="relative h-[300px] sm:h-[400px] rounded overflow-hidden shadow-2xl border border-grey/25 select-none">
+              <img src="/after-work-5.png" alt="After" className="absolute inset-0 w-full h-full object-cover" draggable="false" loading="lazy" decoding="async" />
+              <div className="absolute bottom-4 right-4 bg-gold/90 text-black px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">After</div>
+              <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${sliderPosition5}%` }}>
+                <img src="/before-work-5.png" alt="Before" className="absolute inset-y-0 left-0 h-full object-cover" style={{ width: '100vw' }} draggable="false" loading="lazy" decoding="async" />
+                <div className="absolute bottom-4 left-4 bg-black/90 text-white px-3 py-1 border border-grey/50 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">Before</div>
+              </div>
+              <input type="range" min="0" max="100" value={sliderPosition5} onChange={e => setSliderPosition5(Number(e.target.value))} className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" />
+              <div className="absolute inset-y-0 w-1 bg-gold z-20 pointer-events-none" style={{ left: `${sliderPosition5}%` }}>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold border border-black flex items-center justify-center shadow-lg">
+                  <div className="flex gap-0.5"><div className="w-[1.5px] h-3.5 bg-black" /><div className="w-[1.5px] h-3.5 bg-black" /></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Slider 6 - Project F */}
+            <div data-aos="fade-up" className="relative h-[300px] sm:h-[400px] rounded overflow-hidden shadow-2xl border border-grey/25 select-none">
+              <img src="/after-work-6.png" alt="After" className="absolute inset-0 w-full h-full object-cover" draggable="false" loading="lazy" decoding="async" />
+              <div className="absolute bottom-4 right-4 bg-gold/90 text-black px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">After</div>
+              <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${sliderPosition6}%` }}>
+                <img src="/before-work-6.png" alt="Before" className="absolute inset-y-0 left-0 h-full object-cover" style={{ width: '100vw' }} draggable="false" loading="lazy" decoding="async" />
+                <div className="absolute bottom-4 left-4 bg-black/90 text-white px-3 py-1 border border-grey/50 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">Before</div>
+              </div>
+              <input type="range" min="0" max="100" value={sliderPosition6} onChange={e => setSliderPosition6(Number(e.target.value))} className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" />
+              <div className="absolute inset-y-0 w-1 bg-gold z-20 pointer-events-none" style={{ left: `${sliderPosition6}%` }}>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold border border-black flex items-center justify-center shadow-lg">
+                  <div className="flex gap-0.5"><div className="w-[1.5px] h-3.5 bg-black" /><div className="w-[1.5px] h-3.5 bg-black" /></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Slider 7 - Project G */}
+            <div data-aos="fade-up" className="relative h-[300px] sm:h-[400px] rounded overflow-hidden shadow-2xl border border-grey/25 select-none">
+              <img src="/after-work-7.png" alt="After" className="absolute inset-0 w-full h-full object-cover" draggable="false" loading="lazy" decoding="async" />
+              <div className="absolute bottom-4 right-4 bg-gold/90 text-black px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">After</div>
+              <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${sliderPosition7}%` }}>
+                <img src="/before-work-7.png" alt="Before" className="absolute inset-y-0 left-0 h-full object-cover" style={{ width: '100vw' }} draggable="false" loading="lazy" decoding="async" />
+                <div className="absolute bottom-4 left-4 bg-black/90 text-white px-3 py-1 border border-grey/50 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">Before</div>
+              </div>
+              <input type="range" min="0" max="100" value={sliderPosition7} onChange={e => setSliderPosition7(Number(e.target.value))} className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" />
+              <div className="absolute inset-y-0 w-1 bg-gold z-20 pointer-events-none" style={{ left: `${sliderPosition7}%` }}>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold border border-black flex items-center justify-center shadow-lg">
+                  <div className="flex gap-0.5"><div className="w-[1.5px] h-3.5 bg-black" /><div className="w-[1.5px] h-3.5 bg-black" /></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Slider 8 - Project H */}
+            <div data-aos="fade-up" className="relative h-[300px] sm:h-[400px] rounded overflow-hidden shadow-2xl border border-grey/25 select-none">
+              <img src="/after-work-8.png" alt="After" className="absolute inset-0 w-full h-full object-cover" draggable="false" loading="lazy" decoding="async" />
+              <div className="absolute bottom-4 right-4 bg-gold/90 text-black px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">After</div>
+              <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${sliderPosition8}%` }}>
+                <img src="/before-work-8.png" alt="Before" className="absolute inset-y-0 left-0 h-full object-cover" style={{ width: '100vw' }} draggable="false" loading="lazy" decoding="async" />
+                <div className="absolute bottom-4 left-4 bg-black/90 text-white px-3 py-1 border border-grey/50 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">Before</div>
+              </div>
+              <input type="range" min="0" max="100" value={sliderPosition8} onChange={e => setSliderPosition8(Number(e.target.value))} className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" />
+              <div className="absolute inset-y-0 w-1 bg-gold z-20 pointer-events-none" style={{ left: `${sliderPosition8}%` }}>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold border border-black flex items-center justify-center shadow-lg">
+                  <div className="flex gap-0.5"><div className="w-[1.5px] h-3.5 bg-black" /><div className="w-[1.5px] h-3.5 bg-black" /></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Slider 9 - Project I */}
+            <div data-aos="fade-up" className="relative h-[300px] sm:h-[400px] rounded overflow-hidden shadow-2xl border border-grey/25 select-none">
+              <img src="/after-work-9.png" alt="After" className="absolute inset-0 w-full h-full object-cover" draggable="false" loading="lazy" decoding="async" />
+              <div className="absolute bottom-4 right-4 bg-gold/90 text-black px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">After</div>
+              <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${sliderPosition9}%` }}>
+                <img src="/before-work-9.png" alt="Before" className="absolute inset-y-0 left-0 h-full object-cover" style={{ width: '100vw' }} draggable="false" loading="lazy" decoding="async" />
+                <div className="absolute bottom-4 left-4 bg-black/90 text-white px-3 py-1 border border-grey/50 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">Before</div>
+              </div>
+              <input type="range" min="0" max="100" value={sliderPosition9} onChange={e => setSliderPosition9(Number(e.target.value))} className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" />
+              <div className="absolute inset-y-0 w-1 bg-gold z-20 pointer-events-none" style={{ left: `${sliderPosition9}%` }}>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold border border-black flex items-center justify-center shadow-lg">
+                  <div className="flex gap-0.5"><div className="w-[1.5px] h-3.5 bg-black" /><div className="w-[1.5px] h-3.5 bg-black" /></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Slider 10 - Project J */}
+            <div data-aos="fade-up" className="relative h-[300px] sm:h-[400px] rounded overflow-hidden shadow-2xl border border-grey/25 select-none">
+              <img src="/after-work-10.png" alt="After" className="absolute inset-0 w-full h-full object-cover" draggable="false" loading="lazy" decoding="async" />
+              <div className="absolute bottom-4 right-4 bg-gold/90 text-black px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">After</div>
+              <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${sliderPosition10}%` }}>
+                <img src="/before-work-10.png" alt="Before" className="absolute inset-y-0 left-0 h-full object-cover" style={{ width: '100vw' }} draggable="false" loading="lazy" decoding="async" />
+                <div className="absolute bottom-4 left-4 bg-black/90 text-white px-3 py-1 border border-grey/50 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">Before</div>
+              </div>
+              <input type="range" min="0" max="100" value={sliderPosition10} onChange={e => setSliderPosition10(Number(e.target.value))} className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" />
+              <div className="absolute inset-y-0 w-1 bg-gold z-20 pointer-events-none" style={{ left: `${sliderPosition10}%` }}>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold border border-black flex items-center justify-center shadow-lg">
+                  <div className="flex gap-0.5"><div className="w-[1.5px] h-3.5 bg-black" /><div className="w-[1.5px] h-3.5 bg-black" /></div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -291,6 +417,8 @@ export default function Projects() {
                     src={p.img} 
                     alt={p.title} 
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                     <span className="px-4 py-2 border border-white text-white rounded uppercase tracking-wider text-[10px] font-semibold font-poppins bg-black/40 backdrop-blur-sm">

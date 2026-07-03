@@ -35,7 +35,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 
   return (
     <div 
-      className={`fixed inset-0 bg-[#0c0c0c] z-50 flex flex-col items-center justify-center transition-all duration-1000 ease-in-out ${
+      className={`fixed inset-0 bg-white z-50 flex flex-col items-center justify-center transition-all duration-1000 ease-in-out ${
         fadeExit ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100'
       }`}
     >
@@ -44,17 +44,17 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
         <img 
           src="/logo.png" 
           alt="Project Studio Logo" 
-          className="w-28 h-28 object-cover rounded-lg border border-gold/40 shadow-gold-lg animate-pulse" 
+          className="w-32 h-32 object-contain" 
         />
         
         {/* Typewriter text holder */}
         <div className="flex items-center justify-center min-h-[36px] w-full px-4">
-          <span className="font-heading text-lg sm:text-2xl md:text-3xl font-bold tracking-[0.2em] sm:tracking-[0.3em] text-gold text-shadow-premium text-center block w-full">
+          <span className="font-heading text-lg sm:text-2xl md:text-3xl font-bold tracking-[0.2em] sm:tracking-[0.3em] text-black text-center block w-full">
             {text}
           </span>
         </div>
         
-        <span className="text-[10px] uppercase tracking-[0.35em] text-white/50 font-poppins mt-[-4px]">
+        <span className="text-[10px] uppercase tracking-[0.35em] text-black/40 font-poppins mt-[-4px]">
           Premium Interiors
         </span>
       </div>

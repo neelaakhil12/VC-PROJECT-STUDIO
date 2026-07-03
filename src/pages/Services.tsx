@@ -11,7 +11,7 @@ export default function Services({ onOpenConsultation }: ServicesProps) {
   useEffect(() => {
     AOS.init({
       duration: 1000,
-      once: true
+      once: false
     });
   }, []);
 

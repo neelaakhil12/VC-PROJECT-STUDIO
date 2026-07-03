@@ -17,9 +17,9 @@ export default function Footer() {
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2.5 group">
               <img 
-                src="/logo.png" 
+                src="/footer-logo.png" 
                 alt="Project Studio Logo" 
-                className="w-20 h-20 object-cover rounded border border-gold/30 group-hover:border-gold transition-all duration-300 shadow" 
+                className="w-24 h-24 object-contain rounded transition-all duration-300 shadow" 
               />
               <div className="flex flex-col">
                 <span className="font-heading text-2xl font-bold tracking-widest text-grey">PROJECT STUDIO</span>

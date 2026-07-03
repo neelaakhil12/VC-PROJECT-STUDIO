@@ -42,10 +42,10 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
               <img 
                 src="/logo.png" 
                 alt="Project Studio Logo" 
-                className={`object-cover rounded border border-gold/30 group-hover:border-gold transition-all duration-500 shadow-md w-16 h-16 md:w-20 md:h-20 ${scrolled ? 'md:w-16 md:h-16' : ''}`} 
+                className={`object-contain transition-all duration-500 w-20 h-20 md:w-24 md:h-24 ${scrolled ? 'md:w-20 md:h-20' : ''}`} 
               />
               <div className="flex flex-col">
-                <span className={`font-heading font-bold tracking-widest text-grey transition-all duration-500 text-lg md:text-xl ${scrolled ? 'md:text-lg' : ''}`}>PROJECT STUDIO</span>
+                <span className={`font-heading font-bold tracking-widest text-black transition-all duration-500 text-lg md:text-xl ${scrolled ? 'md:text-lg' : ''}`}>PROJECT STUDIO</span>
                 <span className={`uppercase tracking-[0.25em] text-gold font-poppins transition-all duration-500 text-[8px] md:text-[9px] ${scrolled ? 'md:text-[8px]' : ''}`}>Premium Interiors</span>
               </div>
             </Link>
@@ -56,7 +56,7 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
                 <Link 
                   key={link.name} 
                   to={link.path}
-                  className={`text-sm tracking-wider uppercase transition-colors duration-300 relative py-1 group ${isActive(link.path) ? 'text-gold' : 'text-white/80 hover:text-gold'}`}
+                  className={`text-sm tracking-wider uppercase transition-colors duration-300 relative py-1 group ${isActive(link.path) ? 'text-gold' : 'text-black/70 hover:text-gold'}`}
                 >
                   {link.name}
                   <span className={`absolute bottom-0 left-0 w-full h-[1px] bg-gold scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ${isActive(link.path) ? 'scale-x-100' : ''}`} />
@@ -75,7 +75,7 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
             <div className="md:hidden flex items-center">
               <button 
                 onClick={() => setIsOpen(!isOpen)}
-                className="text-white hover:text-gold transition-colors p-1"
+                className="text-black hover:text-gold transition-colors p-1"
               >
                 {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
@@ -101,7 +101,7 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
               key={link.name} 
               to={link.path}
               onClick={() => setIsOpen(false)}
-              className={`text-lg font-heading tracking-wider py-1 ${isActive(link.path) ? 'text-gold border-b border-gold/30' : 'text-white/90 hover:text-gold'}`}
+              className={`text-lg font-heading tracking-wider py-1 ${isActive(link.path) ? 'text-gold border-b border-gold/30' : 'text-black/80 hover:text-gold'}`}
             >
               {link.name}
             </Link>

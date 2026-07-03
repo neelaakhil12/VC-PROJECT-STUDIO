@@ -13,25 +13,33 @@ export default function Contact() {
     message: ''
   });
   const [submitted, setSubmitted] = useState(false);
+  const [showContactSelect, setShowContactSelect] = useState(false);
 
   useEffect(() => {
-    AOS.init({ duration: 1000, once: true });
+    AOS.init({ duration: 1000, once: false });
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Store message in local storage
+    setShowContactSelect(true);
+  };
+
+  const handleSendToWhatsApp = (selectedNumber: string) => {
+    const textMessage = `Hi Project Studio,\n\nName: ${formData.name}\nPhone: ${formData.phone}\nEmail: ${formData.email}\nService Interested: ${formData.service}\nMessage: ${formData.message}`;
+    const url = `https://wa.me/${selectedNumber}?text=${encodeURIComponent(textMessage)}`;
+
+    // Store in local storage
     const existing = localStorage.getItem('messages');
     const list = existing ? JSON.parse(existing) : [];
     const newMessage = {
       ...formData,
       id: Date.now(),
-      date: new Date().toLocaleDateString()
+      date: new Date().toLocaleDateString(),
+      sentTo: selectedNumber
     };
     localStorage.setItem('messages', JSON.stringify([...list, newMessage]));
 
-    // Trigger feedback
+    setShowContactSelect(false);
     setSubmitted(true);
     confetti({
       particleCount: 80,
@@ -39,6 +47,8 @@ export default function Contact() {
       origin: { y: 0.7 },
       colors: ['#D4AF37', '#000000']
     });
+
+    window.open(url, "_blank");
 
     setTimeout(() => {
       setSubmitted(false);
@@ -262,6 +272,42 @@ export default function Contact() {
 
         </div>
       </div>
+      {/* WHATSAPP CONTACT CHOICE MODAL */}
+      {showContactSelect && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+          <div className="bg-black border border-gold/30 rounded-lg p-6 sm:p-8 max-w-md w-full shadow-2xl relative text-center">
+            <h3 className="text-xl font-heading text-white font-bold mb-2">Redirect to WhatsApp</h3>
+            <p className="text-grey text-xs sm:text-sm font-light mb-6 leading-relaxed">
+              Choose which specialist you want to send your space details and inquiry to:
+            </p>
+            
+            <div className="space-y-4">
+              <button 
+                onClick={() => handleSendToWhatsApp("916305093192")}
+                className="w-full py-3 bg-[#111] hover:bg-gold/10 text-white border border-grey/25 hover:border-gold rounded font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Send className="w-4 h-4 text-gold" />
+                <span>Send to +91 63050 93192</span>
+              </button>
+              
+              <button 
+                onClick={() => handleSendToWhatsApp("917660994433")}
+                className="w-full py-3 bg-[#111] hover:bg-gold/10 text-white border border-grey/25 hover:border-gold rounded font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Send className="w-4 h-4 text-gold" />
+                <span>Send to +91 76609 94433</span>
+              </button>
+            </div>
+
+            <button 
+              onClick={() => setShowContactSelect(false)}
+              className="mt-6 text-xs text-grey hover:text-white underline cursor-pointer"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
