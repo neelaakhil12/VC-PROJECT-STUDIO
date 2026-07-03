@@ -101,7 +101,7 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
               key={link.name} 
               to={link.path}
               onClick={() => setIsOpen(false)}
-              className={`text-lg font-heading tracking-wider py-1 ${isActive(link.path) ? 'text-gold border-b border-gold/30' : 'text-black/80 hover:text-gold'}`}
+              className={`text-lg font-heading tracking-wider py-1 ${isActive(link.path) ? 'text-gold border-b border-gold/30' : 'text-white/85 hover:text-gold'}`}
             >
               {link.name}
             </Link>
