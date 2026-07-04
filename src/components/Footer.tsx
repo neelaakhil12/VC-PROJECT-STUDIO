@@ -51,21 +51,23 @@ export default function Footer() {
       icon: <InstagramIcon />,
       href: contactInfo.instagram || '',
       label: 'Instagram',
-      show: true,
+      style: { background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)' }
     },
     {
       icon: <FacebookIcon />,
       href: contactInfo.facebook || '',
       label: 'Facebook',
-      show: true,
+      style: { backgroundColor: '#1877F2' }
     },
     {
       icon: <YouTubeIcon />,
       href: contactInfo.youtube || '',
       label: 'YouTube',
-      show: true,
+      style: { backgroundColor: '#FF0000' }
     },
   ];
+
+  const activeSocialLinks = socialLinks.filter(link => link.href && link.href.trim() !== '');
 
   return (
     <footer className="bg-black border-t border-gold/20 text-white pt-16 pb-8 relative overflow-hidden">
@@ -92,25 +94,24 @@ export default function Footer() {
             </p>
 
             {/* Social Media Buttons */}
-            <div className="flex items-center gap-3 pt-2">
-              {socialLinks.map(({ icon, href, label }) => (
-                <a
-                  key={label}
-                  href={href || '#'}
-                  target={href ? '_blank' : undefined}
-                  rel="noreferrer"
-                  aria-label={label}
-                  title={label}
-                  className={`w-9 h-9 border rounded flex items-center justify-center transition-all duration-300 group/social ${
-                    href
-                      ? 'border-grey/30 hover:border-gold hover:text-gold text-grey'
-                      : 'border-grey/15 text-grey/30 cursor-default'
-                  }`}
-                >
-                  {icon}
-                </a>
-              ))}
-            </div>
+            {activeSocialLinks.length > 0 && (
+              <div className="flex items-center gap-3 pt-2">
+                {activeSocialLinks.map(({ icon, href, label, style }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={label}
+                    title={label}
+                    style={style}
+                    className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg text-white"
+                  >
+                    {icon}
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Quick Links */}
