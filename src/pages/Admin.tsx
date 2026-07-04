@@ -582,7 +582,7 @@ export default function Admin() {
       <div className="pt-32 pb-24 min-h-screen bg-black flex flex-col justify-center items-center px-4 relative overflow-hidden select-none">
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-gold/5 rounded-full blur-[100px] pointer-events-none" />
         
-        <div className="max-w-md w-full bg-white/5 border border-gold/20 rounded-xl p-8 backdrop-blur-xl shadow-2xl space-y-8" data-aos="zoom-in">
+        <div className="max-w-md w-full bg-white/5 border border-gold/20 rounded-xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-8" data-aos="zoom-in">
           <div className="text-center space-y-2">
             <button 
               type="button"
@@ -703,7 +703,7 @@ export default function Admin() {
         {/* Glow backdrop design */}
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] bg-gold/5 rounded-full blur-[100px] pointer-events-none" />
         
-        <div className="max-w-md w-full bg-white/5 border border-gold/20 rounded-xl p-8 backdrop-blur-xl shadow-2xl space-y-8" data-aos="zoom-in">
+        <div className="max-w-md w-full bg-white/5 border border-gold/20 rounded-xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-8" data-aos="zoom-in">
           <div className="text-center space-y-2">
             <Link to="/" className="inline-block text-gold hover:text-white mb-2 text-xs flex items-center justify-center gap-1">
               <ArrowLeft className="w-3.5 h-3.5" /> Back to Website
@@ -825,12 +825,12 @@ export default function Admin() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Dashboard Sidebar Tabs Selector */}
-          <div className="lg:col-span-3 bg-white p-4 rounded-lg shadow-sm border border-grey/15 space-y-1.5 h-fit">
-            <p className="text-[10px] uppercase font-bold text-grey-dark tracking-wider px-3 mb-2">Content Categories</p>
+          <div className="lg:col-span-3 bg-white p-3 md:p-4 rounded-lg shadow-sm border border-grey/15 flex flex-row lg:flex-col gap-2 overflow-x-auto no-scrollbar h-fit">
+            <p className="hidden lg:block text-[10px] uppercase font-bold text-grey-dark tracking-wider px-3 mb-2">Content Categories</p>
             
             <button 
               onClick={() => { setActiveTab('slides'); setSlideForm({}); }}
-              className={`w-full text-left px-4 py-3 rounded text-sm font-semibold flex items-center gap-3 transition-all ${
+              className={`flex items-center gap-2.5 px-4 py-2.5 rounded text-xs sm:text-sm font-semibold transition-all shrink-0 whitespace-nowrap lg:w-full lg:text-left ${
                 activeTab === 'slides' ? 'bg-gold text-black shadow-sm font-bold' : 'hover:bg-gold/10 text-black/75 hover:text-black'
               }`}
             >
@@ -840,7 +840,7 @@ export default function Admin() {
 
             <button 
               onClick={() => { setActiveTab('services'); setServiceForm({}); }}
-              className={`w-full text-left px-4 py-3 rounded text-sm font-semibold flex items-center gap-3 transition-all ${
+              className={`flex items-center gap-2.5 px-4 py-2.5 rounded text-xs sm:text-sm font-semibold transition-all shrink-0 whitespace-nowrap lg:w-full lg:text-left ${
                 activeTab === 'services' ? 'bg-gold text-black shadow-sm font-bold' : 'hover:bg-gold/10 text-black/75 hover:text-black'
               }`}
             >
@@ -850,7 +850,7 @@ export default function Admin() {
 
             <button 
               onClick={() => { setActiveTab('projects'); setProjectForm({}); }}
-              className={`w-full text-left px-4 py-3 rounded text-sm font-semibold flex items-center gap-3 transition-all ${
+              className={`flex items-center gap-2.5 px-4 py-2.5 rounded text-xs sm:text-sm font-semibold transition-all shrink-0 whitespace-nowrap lg:w-full lg:text-left ${
                 activeTab === 'projects' ? 'bg-gold text-black shadow-sm font-bold' : 'hover:bg-gold/10 text-black/75 hover:text-black'
               }`}
             >
@@ -860,7 +860,7 @@ export default function Admin() {
 
             <button 
               onClick={() => { setActiveTab('videos'); setVideoForm({}); }}
-              className={`w-full text-left px-4 py-3 rounded text-sm font-semibold flex items-center gap-3 transition-all ${
+              className={`flex items-center gap-2.5 px-4 py-2.5 rounded text-xs sm:text-sm font-semibold transition-all shrink-0 whitespace-nowrap lg:w-full lg:text-left ${
                 activeTab === 'videos' ? 'bg-gold text-black shadow-sm font-bold' : 'hover:bg-gold/10 text-black/75 hover:text-black'
               }`}
             >
@@ -868,10 +868,9 @@ export default function Admin() {
               <span>Project Videos ({projects.filter(p => p.videoUrl).length})</span>
             </button>
 
-
             <button 
               onClick={() => { setActiveTab('beforeAfter'); setBeforeAfterForm({}); }}
-              className={`w-full text-left px-4 py-3 rounded text-sm font-semibold flex items-center gap-3 transition-all ${
+              className={`flex items-center gap-2.5 px-4 py-2.5 rounded text-xs sm:text-sm font-semibold transition-all shrink-0 whitespace-nowrap lg:w-full lg:text-left ${
                 activeTab === 'beforeAfter' ? 'bg-gold text-black shadow-sm font-bold' : 'hover:bg-gold/10 text-black/75 hover:text-black'
               }`}
             >
@@ -881,7 +880,7 @@ export default function Admin() {
 
             <button 
               onClick={() => { setActiveTab('contact'); }}
-              className={`w-full text-left px-4 py-3 rounded text-sm font-semibold flex items-center gap-3 transition-all ${
+              className={`flex items-center gap-2.5 px-4 py-2.5 rounded text-xs sm:text-sm font-semibold transition-all shrink-0 whitespace-nowrap lg:w-full lg:text-left ${
                 activeTab === 'contact' ? 'bg-gold text-black shadow-sm font-bold' : 'hover:bg-gold/10 text-black/75 hover:text-black'
               }`}
             >
@@ -911,7 +910,7 @@ export default function Admin() {
                         <input 
                           type="file" 
                           accept="image/*"
-                          className="w-full bg-offwhite border border-grey/25 focus:border-gold outline-none px-4 py-2 rounded text-sm text-black transition-all file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-gold/10 file:text-gold hover:file:bg-gold/20"
+                          className="w-full max-w-full bg-offwhite border border-grey/25 focus:border-gold outline-none p-2 rounded text-xs sm:text-sm text-black transition-all file:mr-2 sm:file:mr-4 file:py-1 file:px-2 sm:file:px-3 file:rounded file:border-0 file:text-[10px] sm:file:text-xs file:font-semibold file:bg-gold/10 file:text-gold hover:file:bg-gold/20 overflow-hidden"
                           onChange={e => handleFileChange(e, (url) => setSlideForm({ ...slideForm, image: url }))}
                         />
                         {slideForm.image && (
@@ -1067,7 +1066,7 @@ export default function Admin() {
                         <input 
                           type="file" 
                           accept="image/*"
-                          className="w-full bg-offwhite border border-grey/25 focus:border-gold outline-none px-4 py-2 rounded text-sm text-black transition-all file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-gold/10 file:text-gold hover:file:bg-gold/20"
+                          className="w-full max-w-full bg-offwhite border border-grey/25 focus:border-gold outline-none p-2 rounded text-xs sm:text-sm text-black transition-all file:mr-2 sm:file:mr-4 file:py-1 file:px-2 sm:file:px-3 file:rounded file:border-0 file:text-[10px] sm:file:text-xs file:font-semibold file:bg-gold/10 file:text-gold hover:file:bg-gold/20 overflow-hidden"
                           onChange={e => handleFileChange(e, (url) => setServiceForm({ ...serviceForm, image: url }))}
                         />
                         {serviceForm.image && (
@@ -1222,7 +1221,7 @@ export default function Admin() {
                         <input 
                           type="file" 
                           accept="image/*"
-                          className="w-full bg-offwhite border border-grey/25 focus:border-gold outline-none px-4 py-2 rounded text-sm text-black transition-all file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-gold/10 file:text-gold hover:file:bg-gold/20"
+                          className="w-full max-w-full bg-offwhite border border-grey/25 focus:border-gold outline-none p-2 rounded text-xs sm:text-sm text-black transition-all file:mr-2 sm:file:mr-4 file:py-1 file:px-2 sm:file:px-3 file:rounded file:border-0 file:text-[10px] sm:file:text-xs file:font-semibold file:bg-gold/10 file:text-gold hover:file:bg-gold/20 overflow-hidden"
                           onChange={e => handleFileChange(e, (url) => setProjectForm({ ...projectForm, img: url }))}
                         />
                         {projectForm.img && (
@@ -1272,7 +1271,7 @@ export default function Admin() {
                   </h3>
                   
                   {/* Add New Category form */}
-                  <form onSubmit={addCategory} className="mt-4 flex gap-2">
+                  <form onSubmit={addCategory} className="mt-4 flex flex-col sm:flex-row gap-2">
                     <input 
                       type="text" 
                       placeholder="e.g. Office Design, Balcony, Bar Unit"
@@ -1283,7 +1282,7 @@ export default function Admin() {
                     />
                     <button 
                       type="submit"
-                      className="px-4 py-2 bg-black hover:bg-gold hover:text-black text-white text-xs font-bold uppercase tracking-wider rounded transition-all cursor-pointer"
+                      className="px-4 py-2 bg-black hover:bg-gold hover:text-black text-white text-xs font-bold uppercase tracking-wider rounded transition-all cursor-pointer whitespace-nowrap shrink-0"
                     >
                       Add Category
                     </button>
@@ -1393,7 +1392,7 @@ export default function Admin() {
                         <input 
                           type="file" 
                           accept="image/*"
-                          className="w-full bg-offwhite border border-grey/25 focus:border-gold outline-none px-4 py-2 rounded text-sm text-black transition-all file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-gold/10 file:text-gold hover:file:bg-gold/20"
+                          className="w-full max-w-full bg-offwhite border border-grey/25 focus:border-gold outline-none p-2 rounded text-xs sm:text-sm text-black transition-all file:mr-2 sm:file:mr-4 file:py-1 file:px-2 sm:file:px-3 file:rounded file:border-0 file:text-[10px] sm:file:text-xs file:font-semibold file:bg-gold/10 file:text-gold hover:file:bg-gold/20 overflow-hidden"
                           onChange={e => handleFileChange(e, (url) => setVideoForm({ ...videoForm, img: url }))}
                         />
                         {videoForm.img && (
@@ -1425,7 +1424,7 @@ export default function Admin() {
                         <input
                           type="file"
                           accept="video/mp4,video/webm,video/quicktime,video/*"
-                          className="w-full bg-offwhite border border-grey/25 focus:border-gold outline-none px-4 py-2 rounded text-sm text-black transition-all file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-gold/10 file:text-gold hover:file:bg-gold/20"
+                          className="w-full max-w-full bg-offwhite border border-grey/25 focus:border-gold outline-none p-2 rounded text-xs sm:text-sm text-black transition-all file:mr-2 sm:file:mr-4 file:py-1 file:px-2 sm:file:px-3 file:rounded file:border-0 file:text-[10px] sm:file:text-xs file:font-semibold file:bg-gold/10 file:text-gold hover:file:bg-gold/20 overflow-hidden"
                           onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (!file) return;
@@ -1586,7 +1585,7 @@ export default function Admin() {
                         <input 
                           type="file" 
                           accept="image/*"
-                          className="w-full bg-white border border-grey/25 focus:border-gold outline-none px-3 py-1.5 rounded text-xs text-black transition-all file:mr-2 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:text-[9px] file:bg-gold/10 file:text-gold hover:file:bg-gold/25"
+                          className="w-full max-w-full bg-white border border-grey/25 focus:border-gold outline-none px-3 py-1.5 rounded text-xs text-black transition-all file:mr-2 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:text-[9px] file:bg-gold/10 file:text-gold hover:file:bg-gold/25 overflow-hidden"
                           onChange={e => handleFileChange(e, (url) => setBeforeAfterForm({ ...beforeAfterForm, beforeImg: url }))}
                         />
                         {beforeAfterForm.beforeImg && (
@@ -1604,7 +1603,7 @@ export default function Admin() {
                         <input 
                           type="file" 
                           accept="image/*"
-                          className="w-full bg-white border border-grey/25 focus:border-gold outline-none px-3 py-1.5 rounded text-xs text-black transition-all file:mr-2 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:text-[9px] file:bg-gold/10 file:text-gold hover:file:bg-gold/25"
+                          className="w-full max-w-full bg-white border border-grey/25 focus:border-gold outline-none px-3 py-1.5 rounded text-xs text-black transition-all file:mr-2 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:text-[9px] file:bg-gold/10 file:text-gold hover:file:bg-gold/25 overflow-hidden"
                           onChange={e => handleFileChange(e, (url) => setBeforeAfterForm({ ...beforeAfterForm, afterImg: url }))}
                         />
                         {beforeAfterForm.afterImg && (
