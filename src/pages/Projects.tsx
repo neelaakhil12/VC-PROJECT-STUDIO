@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Filter, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Filter, X, ChevronLeft, ChevronRight, Play, Video } from 'lucide-react';
 import { dataStore, defaultProjects, defaultBeforeAfterShowcase } from '../dataStore';
 import type { BeforeAfterItem } from '../dataStore';
 import AOS from 'aos';
@@ -11,6 +11,25 @@ interface ProjectItem {
   category: string;
   img: string;
   desc: string;
+  videoUrl?: string;
+}
+
+// Detect if URL is YouTube embed, YouTube watch, or direct MP4
+function getVideoType(url: string): 'youtube' | 'mp4' | null {
+  if (!url) return null;
+  if (url.includes('youtube.com/embed') || url.includes('youtu.be') || url.includes('youtube.com/watch')) return 'youtube';
+  if (url.includes('.mp4') || url.includes('cloudinary') || url.includes('video')) return 'mp4';
+  return 'youtube'; // default fallback
+}
+
+// Convert any YouTube URL to embed format
+function toYouTubeEmbed(url: string): string {
+  if (url.includes('/embed/')) return url;
+  const watchMatch = url.match(/[?&]v=([^&#]+)/);
+  if (watchMatch) return `https://www.youtube.com/embed/${watchMatch[1]}`;
+  const shortMatch = url.match(/youtu\.be\/([^?&#]+)/);
+  if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}`;
+  return url;
 }
 
 export default function Projects() {
@@ -22,6 +41,8 @@ export default function Projects() {
   
   // Lightbox state
   const [activeImgIdx, setActiveImgIdx] = useState<number | null>(null);
+  const [activeVideo, setActiveVideo] = useState<{ url: string; title: string } | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     AOS.init({ duration: 1000, once: false });
@@ -54,25 +75,17 @@ export default function Projects() {
     ? projects 
     : projects.filter(p => p.category === filter);
 
+  // Projects that have a video
+  const projectsWithVideo = projects.filter(p => p.videoUrl && p.videoUrl.trim() !== '');
+
   // Lightbox handlers
-  const openLightbox = (index: number) => {
-    setActiveImgIdx(index);
-  };
-
-  const closeLightbox = () => {
-    setActiveImgIdx(null);
-  };
-
+  const openLightbox = (index: number) => setActiveImgIdx(index);
+  const closeLightbox = () => setActiveImgIdx(null);
   const nextSlide = () => {
-    if (activeImgIdx !== null) {
-      setActiveImgIdx((activeImgIdx + 1) % filteredProjects.length);
-    }
+    if (activeImgIdx !== null) setActiveImgIdx((activeImgIdx + 1) % filteredProjects.length);
   };
-
   const prevSlide = () => {
-    if (activeImgIdx !== null) {
-      setActiveImgIdx((activeImgIdx - 1 + filteredProjects.length) % filteredProjects.length);
-    }
+    if (activeImgIdx !== null) setActiveImgIdx((activeImgIdx - 1 + filteredProjects.length) % filteredProjects.length);
   };
 
   return (
@@ -90,6 +103,80 @@ export default function Projects() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+
+        {/* ========== VIDEO SHOWCASE SECTION ========== */}
+        {projectsWithVideo.length > 0 && (
+          <div className="mb-24" data-aos="fade-up">
+            <div className="text-center mb-10">
+              <span className="text-gold text-xs uppercase tracking-[0.25em] font-semibold font-poppins">Cinematic Walkthroughs</span>
+              <h2 className="text-2xl sm:text-3xl font-heading text-black font-semibold mt-1">Project Video Showcase</h2>
+              <p className="text-grey-dark text-xs sm:text-sm font-light max-w-md mx-auto mt-2">
+                Watch our interior transformations come to life through immersive video tours.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {projectsWithVideo.map((project, index) => {
+                const videoType = getVideoType(project.videoUrl!);
+                const isYoutube = videoType === 'youtube';
+                const embedUrl = isYoutube ? toYouTubeEmbed(project.videoUrl!) : project.videoUrl!;
+
+                return (
+                  <div
+                    key={project.id}
+                    data-aos="fade-up"
+                    data-aos-delay={index * 100}
+                    className="group bg-black rounded-xl overflow-hidden border border-gold/15 shadow-2xl hover:border-gold/40 transition-all duration-500"
+                  >
+                    {/* Video Player */}
+                    <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                      {isYoutube ? (
+                        <iframe
+                          src={`${embedUrl}?autoplay=0&rel=0&modestbranding=1`}
+                          title={project.title}
+                          className="absolute inset-0 w-full h-full"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      ) : (
+                        <video
+                          ref={videoRef}
+                          className="absolute inset-0 w-full h-full object-cover"
+                          controls
+                          poster={project.img}
+                          preload="metadata"
+                        >
+                          <source src={embedUrl} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
+                    </div>
+
+                    {/* Video card info */}
+                    <div className="p-5 border-t border-gold/10">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <span className="text-gold text-[10px] uppercase tracking-[0.2em] font-poppins font-semibold">{project.category}</span>
+                          <h3 className="text-white font-heading font-bold text-base mt-0.5 group-hover:text-gold transition-colors">
+                            {project.title}
+                          </h3>
+                          {project.desc && (
+                            <p className="text-grey text-xs font-light leading-relaxed mt-1.5 line-clamp-2">{project.desc}</p>
+                          )}
+                        </div>
+                        <div className="flex-shrink-0 w-9 h-9 rounded-full border border-gold/30 flex items-center justify-center bg-gold/10">
+                          <Video className="w-4 h-4 text-gold" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* BEFORE & AFTER SHOWCASE */}
         <div className="mb-24 space-y-8" data-aos="fade-up">
           <div className="text-center">
@@ -152,7 +239,6 @@ export default function Projects() {
 
         {/* CONTROLS (Category Filter) */}
         <div className="flex flex-col md:flex-row justify-center items-center gap-6 mb-12 border-b border-grey/20 pb-8">
-          {/* Category Filter Chips */}
           <div className="flex flex-wrap items-center justify-center gap-2">
             <Filter className="w-4 h-4 text-gold mr-2 hidden sm:block" />
             {categories.map(cat => (
@@ -197,6 +283,12 @@ export default function Projects() {
                   <span className="absolute top-4 left-4 px-3 py-1 bg-black/85 text-gold text-[10px] uppercase font-poppins tracking-widest font-semibold rounded border border-gold/20">
                     {p.category}
                   </span>
+                  {/* Video badge if project has a video */}
+                  {p.videoUrl && (
+                    <span className="absolute top-4 right-4 flex items-center gap-1 px-2 py-1 bg-gold text-black text-[9px] uppercase font-poppins tracking-wider font-bold rounded">
+                      <Play className="w-2.5 h-2.5 fill-black" /> Video
+                    </span>
+                  )}
                 </div>
                 <div className="p-6 flex-grow flex flex-col justify-between">
                   <div>
@@ -242,6 +334,16 @@ export default function Projects() {
               <span className="text-gold text-xs uppercase tracking-widest font-poppins">{filteredProjects[activeImgIdx].category}</span>
               <h3 className="text-xl sm:text-2xl font-heading font-semibold mt-1">{filteredProjects[activeImgIdx].title}</h3>
               <p className="text-grey text-xs sm:text-sm font-light leading-relaxed mt-2">{filteredProjects[activeImgIdx].desc}</p>
+              {filteredProjects[activeImgIdx].videoUrl && (
+                <a
+                  href={filteredProjects[activeImgIdx].videoUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 mt-4 px-5 py-2 bg-gold text-black rounded text-xs font-bold uppercase tracking-wider hover:bg-white transition-colors"
+                >
+                  <Play className="w-3.5 h-3.5 fill-black" /> Watch Video
+                </a>
+              )}
             </div>
           </div>
 
@@ -252,6 +354,41 @@ export default function Projects() {
           >
             <ChevronRight className="w-8 h-8" />
           </button>
+        </div>
+      )}
+
+      {/* Video Modal Overlay */}
+      {activeVideo && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 md:p-12"
+          onClick={() => setActiveVideo(null)}
+        >
+          <button className="absolute top-6 right-6 text-white hover:text-gold transition-colors">
+            <X className="w-8 h-8" />
+          </button>
+          <div className="w-full max-w-4xl" onClick={e => e.stopPropagation()}>
+            <div className="relative w-full rounded-xl overflow-hidden border border-gold/20 shadow-2xl" style={{ paddingBottom: '56.25%' }}>
+              {getVideoType(activeVideo.url) === 'youtube' ? (
+                <iframe
+                  src={`${toYouTubeEmbed(activeVideo.url)}?autoplay=1&rel=0&modestbranding=1`}
+                  title={activeVideo.title}
+                  className="absolute inset-0 w-full h-full"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <video
+                  className="absolute inset-0 w-full h-full object-cover"
+                  controls
+                  autoPlay
+                >
+                  <source src={activeVideo.url} type="video/mp4" />
+                </video>
+              )}
+            </div>
+            <p className="text-center text-white font-heading font-semibold mt-4 text-lg">{activeVideo.title}</p>
+          </div>
         </div>
       )}
     </div>

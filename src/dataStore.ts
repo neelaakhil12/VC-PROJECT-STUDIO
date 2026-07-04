@@ -23,6 +23,7 @@ export interface ProjectItem {
   category: string;
   img: string;
   desc: string;
+  videoUrl?: string;
 }
 
 export interface ProjectCategory {
@@ -360,6 +361,59 @@ export async function uploadToCloudinary(file: File): Promise<string> {
   return data.secure_url;
 }
 
+// Direct Secure Cloudinary Video Upload (uses /video/upload endpoint)
+export async function uploadVideoToCloudinary(
+  file: File,
+  onProgress?: (percent: number) => void
+): Promise<string> {
+  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'kzr6tb81';
+  const apiKey = import.meta.env.VITE_CLOUDINARY_API_KEY || '';
+  const apiSecret = import.meta.env.VITE_CLOUDINARY_API_SECRET || '';
+  const timestamp = Math.floor(Date.now() / 1000).toString();
+  const folder = 'vcprojectstudio/videos';
+
+  const signatureString = `folder=${folder}&timestamp=${timestamp}${apiSecret}`;
+  const signature = await calculateSha1(signatureString);
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('api_key', apiKey);
+  formData.append('timestamp', timestamp);
+  formData.append('folder', folder);
+  formData.append('signature', signature);
+
+  // Use XMLHttpRequest so we can track upload progress
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable && onProgress) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        onProgress(percent);
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const data = JSON.parse(xhr.responseText);
+        resolve(data.secure_url);
+      } else {
+        try {
+          const err = JSON.parse(xhr.responseText);
+          reject(new Error(err.error?.message || 'Failed to upload video to Cloudinary.'));
+        } catch {
+          reject(new Error('Failed to upload video to Cloudinary.'));
+        }
+      }
+    };
+
+    xhr.onerror = () => reject(new Error('Network error during video upload.'));
+
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${cloudName}/video/upload`);
+    xhr.send(formData);
+  });
+}
+
 // Asynchronous Data Store Bridge to Supabase Postgres Tables
 export const dataStore = {
   async getHomeSlides(): Promise<HomeSlide[]> {
@@ -467,7 +521,8 @@ export const dataStore = {
       title: row.title,
       category: row.category,
       img: row.img,
-      desc: row.desc_text
+      desc: row.desc_text,
+      videoUrl: row.video_url || ''
     }));
   },
 
@@ -485,7 +540,8 @@ export const dataStore = {
         title: p.title,
         category: p.category,
         img: p.img,
-        desc_text: p.desc
+        desc_text: p.desc,
+        video_url: p.videoUrl || ''
       }));
       const { error: insError } = await supabase
         .from('projects')
