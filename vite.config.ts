@@ -55,6 +55,31 @@ const apiPlugin = () => ({
         }
         return;
       }
+
+      if (req.url === '/api/keep-alive' && req.method === 'GET') {
+        try {
+          const expressRes = {
+            status(code: number) { res.statusCode = code; return this; },
+            json(data: any) {
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify(data));
+              return this;
+            },
+            setHeader(name: string, value: string) { res.setHeader(name, value); return this; },
+            end() { res.end(); return this; }
+          };
+          const apiPath = path.resolve(__dirname, 'api/keep-alive.cjs');
+          delete require.cache[require.resolve(apiPath)];
+          const handler = require(apiPath);
+          await handler(req, expressRes);
+        } catch (error: any) {
+          res.statusCode = 500;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ error: error.message || 'Internal server error' }));
+        }
+        return;
+      }
+
       next();
     });
   }
