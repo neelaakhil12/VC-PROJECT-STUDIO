@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Phone, Mail, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { dataStore, defaultContactDetails } from '../dataStore';
+import type { ContactDetails } from '../dataStore';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
 export default function Contact() {
+  const [contactInfo, setContactInfo] = useState<ContactDetails>(defaultContactDetails);
+
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -17,6 +21,15 @@ export default function Contact() {
 
   useEffect(() => {
     AOS.init({ duration: 1000, once: false });
+    const loadContact = async () => {
+      try {
+        const data = await dataStore.getContactDetails();
+        setContactInfo(data);
+      } catch (err) {
+        console.error('Failed to load contact details:', err);
+      }
+    };
+    loadContact();
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -97,7 +110,7 @@ export default function Contact() {
                 <div>
                   <h4 className="font-bold text-sm">Studio Location</h4>
                   <p className="text-grey-dark text-xs mt-1 leading-relaxed">
-                    Kukatpally, Allwyn Colony, Near Saibaba Temple, Hyderabad, TS, 500072
+                    {contactInfo.location}
                   </p>
                 </div>
               </div>
@@ -107,11 +120,11 @@ export default function Contact() {
                 <div>
                   <h4 className="font-bold text-sm">Direct Phone</h4>
                   <div className="flex flex-col gap-1 mt-1">
-                    <a href="tel:+916305093192" className="text-grey-dark text-xs block hover:text-gold transition-colors">
-                      +91 63050 93192
+                    <a href={`tel:${contactInfo.phone1.replace(/\s+/g, '')}`} className="text-grey-dark text-xs block hover:text-gold transition-colors">
+                      {contactInfo.phone1}
                     </a>
-                    <a href="tel:+917660994433" className="text-grey-dark text-xs block hover:text-gold transition-colors">
-                      +91 76609 94433
+                    <a href={`tel:${contactInfo.phone2.replace(/\s+/g, '')}`} className="text-grey-dark text-xs block hover:text-gold transition-colors">
+                      {contactInfo.phone2}
                     </a>
                   </div>
                 </div>
@@ -121,8 +134,8 @@ export default function Contact() {
                 <Mail className="w-6 h-6 text-gold shrink-0 mt-0.5" />
                 <div>
                   <h4 className="font-bold text-sm">Email Address</h4>
-                  <a href="mailto:vcprojectstudio@gmail.com" className="text-grey-dark text-xs mt-1 block hover:text-gold transition-colors">
-                    vcprojectstudio@gmail.com
+                  <a href={`mailto:${contactInfo.email}`} className="text-grey-dark text-xs mt-1 block hover:text-gold transition-colors">
+                    {contactInfo.email}
                   </a>
                 </div>
               </div>
@@ -132,7 +145,7 @@ export default function Contact() {
                 <div>
                   <h4 className="font-bold text-sm">Operating Hours</h4>
                   <p className="text-grey-dark text-xs mt-1">
-                    Monday - Sunday: 10:00 AM - 8:30 PM
+                    {contactInfo.hours}
                   </p>
                 </div>
               </div>
@@ -142,13 +155,13 @@ export default function Contact() {
             {/* Quick Chat Actions */}
             <div className="grid grid-cols-2 gap-4">
               <a 
-                href="tel:+916305093192"
+                href={`tel:${contactInfo.phone1.replace(/\s+/g, '')}`}
                 className="flex items-center justify-center gap-2 py-3 border border-black hover:border-gold hover:text-gold font-semibold uppercase text-xs rounded transition-all tracking-wider text-center bg-white"
               >
                 Call Office
               </a>
               <a 
-                href="https://wa.me/916305093192?text=Hi%20VC%20Project%20Studio%2C%20I%20would%20like%20to%20get%20a%20quote%20for%20my%20home%20interiors."
+                href={`https://wa.me/${contactInfo.whatsapp1}?text=Hi%20VC%20Project%20Studio%2C%20I%20would%20like%20to%20get%20a%20quote%20for%20my%20home%20interiors.`}
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center justify-center gap-2 py-3 bg-[#25D366] hover:bg-[#20ba59] text-white font-semibold uppercase text-xs rounded transition-all tracking-wider text-center"
@@ -245,7 +258,7 @@ export default function Contact() {
 
                     <button 
                       type="submit"
-                      className="w-full py-3 bg-gold-gradient text-black font-semibold uppercase text-xs tracking-wider rounded hover:shadow-gold-glow transition-all duration-300 transform active:scale-95"
+                      className="w-full py-3 bg-gold-gradient text-black font-semibold uppercase text-xs tracking-wider rounded hover:shadow-gold-glow transition-all duration-300 transform active:scale-95 cursor-pointer"
                     >
                       Submit Details
                     </button>
@@ -259,7 +272,7 @@ export default function Contact() {
               {/* Responsive Google Map frame mapping Kukatpally, Allwyn Colony area */}
               <iframe 
                 title="Project Studio Location Map"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3805.1585863261173!2d78.399993314878!3d17.485608388019623!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb90c055555555%3A0x7d0a2333d4ff3701!2sKukatpally%20Allwyn%20Colony%2C%20Hyderabad%2C%20Telangana!5e0!3m2!1sen!2sin!4v1680000000000!5m2!1sen!2sin" 
+                src={contactInfo.mapEmbedUrl} 
                 width="100%" 
                 height="100%" 
                 style={{ border: 0 }} 
@@ -283,19 +296,19 @@ export default function Contact() {
             
             <div className="space-y-4">
               <button 
-                onClick={() => handleSendToWhatsApp("916305093192")}
+                onClick={() => handleSendToWhatsApp(contactInfo.whatsapp1)}
                 className="w-full py-3 bg-[#111] hover:bg-gold/10 text-white border border-grey/25 hover:border-gold rounded font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Send className="w-4 h-4 text-gold" />
-                <span>Send to +91 63050 93192</span>
+                <span>Send to {contactInfo.phone1}</span>
               </button>
               
               <button 
-                onClick={() => handleSendToWhatsApp("917660994433")}
+                onClick={() => handleSendToWhatsApp(contactInfo.whatsapp2)}
                 className="w-full py-3 bg-[#111] hover:bg-gold/10 text-white border border-grey/25 hover:border-gold rounded font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Send className="w-4 h-4 text-gold" />
-                <span>Send to +91 76609 94433</span>
+                <span>Send to {contactInfo.phone2}</span>
               </button>
             </div>
 

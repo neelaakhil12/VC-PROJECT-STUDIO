@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ShieldCheck, Heart, Award, ArrowRightCircle, Star } from 'lucide-react';
+import { dataStore, defaultHomeSlides, defaultServices, defaultProjects, defaultBeforeAfterShowcase } from '../dataStore';
+import type { HomeSlide, ServiceItem, ProjectItem, BeforeAfterItem } from '../dataStore';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
@@ -12,24 +14,74 @@ interface HomeProps {
 export default function Home({ onOpenConsultation, splashDone = false }: HomeProps) {
   const metricsRef = useRef<HTMLDivElement | null>(null);
   const [startCount, setStartCount] = useState(false);
-  const [homeSlider1, setHomeSlider1] = useState(50);
-  const [homeSlider2, setHomeSlider2] = useState(50);
-  const [homeSlider3, setHomeSlider3] = useState(50);
+
+  // Dynamic content states
+  const [slides, setSlides] = useState<HomeSlide[]>(defaultHomeSlides);
+  const [servicesList, setServicesList] = useState<ServiceItem[]>(defaultServices);
+  const [projectsList, setProjectsList] = useState<ProjectItem[]>(defaultProjects);
+  const [beforeAfterItems, setBeforeAfterItems] = useState<BeforeAfterItem[]>(defaultBeforeAfterShowcase);
+  const [sliderPositions, setSliderPositions] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const homeSlides = await dataStore.getHomeSlides();
+        if (homeSlides.length > 0) setSlides(homeSlides);
+        
+        const servicesData = await dataStore.getServices();
+        if (servicesData.length > 0) setServicesList(servicesData);
+        
+        const projectsData = await dataStore.getProjects();
+        if (projectsData.length > 0) setProjectsList(projectsData);
+        
+        const beforeAfterData = await dataStore.getBeforeAfterShowcase();
+        if (beforeAfterData.length > 0) setBeforeAfterItems(beforeAfterData);
+      } catch (err) {
+        console.error('Failed to load home page details from Supabase:', err);
+      }
+    };
+    loadData();
+  }, []);
+
+  const previewProjects = projectsList.slice(0, 3);
+
+  const [currentHeroIdx, setCurrentHeroIdx] = useState(0);
+
+  // Get active slide content
+  const currentSlide = slides[currentHeroIdx] || { title: '', subtext: '', image: '' };
+  const titleText = currentSlide.title || '';
+  const titleParts = titleText.split('|');
+  const heroLine1 = titleParts[0] || '';
+  const heroLine2 = titleParts[1] || '';
+  const fullText = heroLine1 + (heroLine2 ? heroLine2 : '');
+  const subText = currentSlide.subtext || '';
+
   // Typewriter state — heading
-  const heroLine1 = 'Crafting Dream Interiors with ';
-  const heroLine2 = 'Elegance & Affordability';
-  const fullText = heroLine1 + heroLine2;
   const [typedCount, setTypedCount] = useState(0);
   const [phase, setPhase] = useState<'typing' | 'pause' | 'erasing' | 'restart'>('typing');
   const [showCursor, setShowCursor] = useState(true);
-
-  const subText = 'Transform your home with premium modular designs and expert styling, tailored to your budget.';
 
   // Counters state
   const [projectCount, setProjectCount] = useState(0);
   const [clientCount, setClientCount] = useState(0);
   const [experienceYears, setExperienceYears] = useState(0);
 
+  // Animate slide change
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentHeroIdx(prev => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [slides.length]);
+
+  // Reset typewriter when slide image changes
+  useEffect(() => {
+    setTypedCount(0);
+    setPhase('typing');
+  }, [currentHeroIdx]);
+
+  // Typewriter loop
   useEffect(() => {
     if (!splashDone) return;
     AOS.init({ duration: 1000, once: false, easing: 'ease-out-cubic' });
@@ -56,7 +108,7 @@ export default function Home({ onOpenConsultation, splashDone = false }: HomePro
     }
 
     return () => clearTimeout(t);
-  }, [typedCount, phase, splashDone]);
+  }, [typedCount, phase, splashDone, fullText]);
 
   // Blinking cursor for heading
   useEffect(() => {
@@ -96,62 +148,6 @@ export default function Home({ onOpenConsultation, splashDone = false }: HomePro
 
     return () => clearInterval(interval);
   }, [startCount]);
-
-  const heroImages = [
-    "/image copy 10.png",
-    "/image copy 13.png",
-    "/image copy 12.png",
-    "/image copy 14.png",
-    "/image copy.png"
-  ];
-
-  const [currentHeroIdx, setCurrentHeroIdx] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentHeroIdx(prev => (prev + 1) % heroImages.length);
-    }, 2000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const services = [
-    {
-      title: "Modular Solutions & Carpentry",
-      desc: "Perfect fitting modular kitchens, custom wardrobes, storage structures, and sleek TV units crafted to match your dimensions.",
-      img: "/image%20copy%207.png",
-      link: "/services"
-    },
-    {
-      title: "Turnkey Execution",
-      desc: "End-to-end management including partition, electrical cabling, premium lighting layouts, false ceilings, and post-work deep cleaning.",
-      img: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=600&q=80",
-      link: "/services"
-    },
-    {
-      title: "Styling & Decor Consultation",
-      desc: "Curating premium color schemes, custom wallpapers, fabric curtains, designer fixtures, and soft furnishings to complete the look.",
-      img: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=600&q=80",
-      link: "/services"
-    }
-  ];
-
-  const previewProjects = [
-    {
-      title: "Modern Luxury Living Lounge",
-      desc: "Sophisticated living space with a large sectional sofa, custom wooden partition, and an abstract backlit botanical wall.",
-      img: "/image%20copy%206.png"
-    },
-    {
-      title: "Olive & White Modular Kitchen",
-      desc: "Ergonomic L-shaped modular kitchen pairing matte olive green lower cabinets with high-gloss white overhead shutters.",
-      img: "/image%20copy%207.png"
-    },
-    {
-      title: "Backlit Accent Master Bedroom",
-      desc: "Luxury bedroom design featuring custom ambient cove false ceiling, backlit floral headboard, and a fluted vanity wall.",
-      img: "/image%20copy%202.png"
-    }
-  ];
 
   const testimonials = [
     {
@@ -206,18 +202,16 @@ export default function Home({ onOpenConsultation, splashDone = false }: HomePro
     }
   ];
 
-
-
   return (
     <div className="relative">
       {/* HERO SECTION */}
       <section className="relative h-[70vh] md:h-[calc(100vh-96px)] flex items-center justify-center overflow-hidden mt-20 md:mt-24">
         {/* Carousel Background Images */}
-        {heroImages.map((img, idx) => (
+        {slides.map((s, idx) => (
           <div
-            key={idx}
+            key={s.id}
             className={`absolute inset-0 bg-cover bg-[position:55%_center] sm:bg-center transition-opacity duration-1000 ease-in-out ${idx === currentHeroIdx ? 'opacity-100' : 'opacity-0'}`}
-            style={{ backgroundImage: `url("${encodeURI(img)}")` }}
+            style={{ backgroundImage: `url("${encodeURI(s.image)}")` }}
           />
         ))}
 
@@ -327,54 +321,52 @@ export default function Home({ onOpenConsultation, splashDone = false }: HomePro
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Slider 1 */}
-            <div data-aos="fade-up" className="relative h-[300px] sm:h-[380px] rounded overflow-hidden shadow-xl border border-grey/25 select-none">
-              <img src="/after-work-2.png" alt="After" className="absolute inset-0 w-full h-full object-cover" draggable="false" loading="lazy" decoding="async" />
-              <div className="absolute bottom-4 right-4 bg-gold/90 text-black px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">After</div>
-              <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${homeSlider1}%` }}>
-                <img src="/before-work-2.png" alt="Before" className="absolute inset-y-0 left-0 h-full object-cover" style={{ width: '100vw' }} draggable="false" loading="lazy" decoding="async" />
-                <div className="absolute bottom-4 left-4 bg-black/90 text-white px-3 py-1 border border-grey/50 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">Before</div>
-              </div>
-              <input type="range" min="0" max="100" value={homeSlider1} onChange={e => setHomeSlider1(Number(e.target.value))} className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" />
-              <div className="absolute inset-y-0 w-1 bg-gold z-20 pointer-events-none" style={{ left: `${homeSlider1}%` }}>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold border border-black flex items-center justify-center shadow-lg">
-                  <div className="flex gap-0.5"><div className="w-[1.5px] h-3.5 bg-black" /><div className="w-[1.5px] h-3.5 bg-black" /></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {beforeAfterItems.slice(0, 4).map((item, index) => {
+              const pos = sliderPositions[item.id] ?? 50;
+              return (
+                <div 
+                  key={item.id}
+                  data-aos="fade-up" 
+                  data-aos-delay={(index % 2) * 100}
+                  className="relative h-[300px] sm:h-[380px] rounded overflow-hidden shadow-xl border border-grey/25 select-none"
+                >
+                  {/* Background After Image */}
+                  <img src={item.afterImg} alt="After" className="absolute inset-0 w-full h-full object-cover" draggable="false" loading="lazy" decoding="async" />
+                  <div className="absolute bottom-4 right-4 bg-gold/90 text-black px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">After</div>
+                  
+                  {/* Foreground Clipped Before Image */}
+                  <img 
+                    src={item.beforeImg} 
+                    alt="Before" 
+                    className="absolute inset-0 w-full h-full object-cover" 
+                    style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
+                    draggable="false" 
+                    loading="lazy" 
+                    decoding="async" 
+                  />
+                  <div className="absolute bottom-4 left-4 bg-black/90 text-white px-3 py-1 border border-grey/50 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">Before</div>
+                  
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    value={pos} 
+                    onChange={e => setSliderPositions(prev => ({ ...prev, [item.id]: Number(e.target.value) }))} 
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" 
+                  />
+                  
+                  <div className="absolute inset-y-0 w-1 bg-gold z-20 pointer-events-none" style={{ left: `${pos}%` }}>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold border border-black flex items-center justify-center shadow-lg">
+                      <div className="flex gap-0.5">
+                        <div className="w-[1.5px] h-3.5 bg-black" />
+                        <div className="w-[1.5px] h-3.5 bg-black" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Slider 2 */}
-            <div data-aos="fade-up" data-aos-delay="100" className="relative h-[300px] sm:h-[380px] rounded overflow-hidden shadow-xl border border-grey/25 select-none">
-              <img src="/after-work-3.png" alt="After" className="absolute inset-0 w-full h-full object-cover" draggable="false" loading="lazy" decoding="async" />
-              <div className="absolute bottom-4 right-4 bg-gold/90 text-black px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">After</div>
-              <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${homeSlider2}%` }}>
-                <img src="/before-work-3.png" alt="Before" className="absolute inset-y-0 left-0 h-full object-cover" style={{ width: '100vw' }} draggable="false" loading="lazy" decoding="async" />
-                <div className="absolute bottom-4 left-4 bg-black/90 text-white px-3 py-1 border border-grey/50 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">Before</div>
-              </div>
-              <input type="range" min="0" max="100" value={homeSlider2} onChange={e => setHomeSlider2(Number(e.target.value))} className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" />
-              <div className="absolute inset-y-0 w-1 bg-gold z-20 pointer-events-none" style={{ left: `${homeSlider2}%` }}>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold border border-black flex items-center justify-center shadow-lg">
-                  <div className="flex gap-0.5"><div className="w-[1.5px] h-3.5 bg-black" /><div className="w-[1.5px] h-3.5 bg-black" /></div>
-                </div>
-              </div>
-            </div>
-
-            {/* Slider 3 */}
-            <div data-aos="fade-up" data-aos-delay="200" className="relative h-[300px] sm:h-[380px] rounded overflow-hidden shadow-xl border border-grey/25 select-none">
-              <img src="/after-work.png" alt="After" className="absolute inset-0 w-full h-full object-cover" draggable="false" loading="lazy" decoding="async" />
-              <div className="absolute bottom-4 right-4 bg-gold/90 text-black px-3 py-1 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">After</div>
-              <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${homeSlider3}%` }}>
-                <img src="/before-work.png" alt="Before" className="absolute inset-y-0 left-0 h-full object-cover" style={{ width: '100vw' }} draggable="false" loading="lazy" decoding="async" />
-                <div className="absolute bottom-4 left-4 bg-black/90 text-white px-3 py-1 border border-grey/50 rounded text-xs font-semibold uppercase tracking-wider font-poppins z-20">Before</div>
-              </div>
-              <input type="range" min="0" max="100" value={homeSlider3} onChange={e => setHomeSlider3(Number(e.target.value))} className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" />
-              <div className="absolute inset-y-0 w-1 bg-gold z-20 pointer-events-none" style={{ left: `${homeSlider3}%` }}>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gold border border-black flex items-center justify-center shadow-lg">
-                  <div className="flex gap-0.5"><div className="w-[1.5px] h-3.5 bg-black" /><div className="w-[1.5px] h-3.5 bg-black" /></div>
-                </div>
-              </div>
-            </div>
+              );
+            })}
           </div>
 
           {/* Centered View More button */}
@@ -469,16 +461,16 @@ export default function Home({ onOpenConsultation, splashDone = false }: HomePro
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {services.map((service, index) => (
+            {servicesList.map((service, index) => (
               <div 
-                key={index} 
+                key={service.id} 
                 className="bg-white rounded overflow-hidden shadow-md group hover:shadow-xl transition-all duration-500 flex flex-col h-full border border-grey/10"
                 data-aos="zoom-in"
                 data-aos-delay={index * 100}
               >
                 <div className="h-[240px] overflow-hidden relative">
                   <img 
-                    src={service.img} 
+                    src={service.image} 
                     alt={service.title} 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
                   />
@@ -487,10 +479,10 @@ export default function Home({ onOpenConsultation, splashDone = false }: HomePro
                 <div className="p-8 flex flex-col justify-between flex-grow">
                   <div>
                     <h3 className="font-heading text-lg font-bold text-black mb-3 group-hover:text-gold transition-colors">{service.title}</h3>
-                    <p className="text-grey-dark text-sm font-light leading-relaxed mb-6">{service.desc}</p>
+                    <p className="text-grey-dark text-sm font-light leading-relaxed mb-6">{service.description}</p>
                   </div>
                   <Link 
-                    to={service.link}
+                    to="/services"
                     className="text-xs uppercase tracking-widest font-semibold hover:text-gold transition-colors flex items-center gap-2"
                   >
                     Read Details <ArrowRight className="w-3 h-3" />
@@ -521,7 +513,7 @@ export default function Home({ onOpenConsultation, splashDone = false }: HomePro
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {previewProjects.map((project, index) => (
               <div 
-                key={index} 
+                key={project.id} 
                 className="group relative h-[380px] overflow-hidden rounded border border-grey/20"
                 data-aos="fade-up"
                 data-aos-delay={index * 100}

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Disallow administrative dashboard indexation
+Disallow: /admin
+
+Sitemap: https://vcprojectstudio.com/sitemap.xml

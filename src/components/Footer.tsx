@@ -1,7 +1,25 @@
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Mail, Phone, MapPin, Instagram, Facebook, ArrowUp } from 'lucide-react';
+import { dataStore, defaultContactDetails } from '../dataStore';
+import type { ContactDetails } from '../dataStore';
 
 export default function Footer() {
+  const [contactInfo, setContactInfo] = useState<ContactDetails>(defaultContactDetails);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    const loadContact = async () => {
+      try {
+        const data = await dataStore.getContactDetails();
+        setContactInfo(data);
+      } catch (err) {
+        console.error('Failed to load contact info in footer:', err);
+      }
+    };
+    loadContact();
+  }, [pathname]);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -79,18 +97,18 @@ export default function Footer() {
             <ul className="space-y-4 text-sm text-grey font-light">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-gold shrink-0 mt-0.5" />
-                <span>Kukatpally, Allwyn Colony, Near Saibaba Temple, Hyderabad, TS, 500072</span>
+                <span>{contactInfo.location}</span>
               </li>
               <li className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-gold shrink-0 mt-0.5" />
                 <div className="flex flex-col gap-1">
-                  <a href="tel:+916305093192" className="hover:text-white transition-colors">+91 63050 93192</a>
-                  <a href="tel:+917660994433" className="hover:text-white transition-colors">+91 76609 94433</a>
+                  <a href={`tel:${contactInfo.phone1.replace(/\s+/g, '')}`} className="hover:text-white transition-colors">{contactInfo.phone1}</a>
+                  <a href={`tel:${contactInfo.phone2.replace(/\s+/g, '')}`} className="hover:text-white transition-colors">{contactInfo.phone2}</a>
                 </div>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-gold shrink-0" />
-                <a href="mailto:vcprojectstudio@gmail.com" className="hover:text-white transition-colors">vcprojectstudio@gmail.com</a>
+                <a href={`mailto:${contactInfo.email}`} className="hover:text-white transition-colors">{contactInfo.email}</a>
               </li>
             </ul>
           </div>

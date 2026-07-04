@@ -1,5 +1,7 @@
-import { useEffect } from 'react';
-import { LayoutGrid, Wrench, Palette, Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { LayoutGrid, Wrench, Palette, Check, ShieldCheck, Heart, Award, Star } from 'lucide-react';
+import { dataStore, defaultServices } from '../dataStore';
+import type { ServiceItem } from '../dataStore';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
@@ -7,58 +9,39 @@ interface ServicesProps {
   onOpenConsultation: () => void;
 }
 
+const renderIcon = (iconName: string) => {
+  const props = { className: "w-8 h-8 text-gold" };
+  switch (iconName) {
+    case 'LayoutGrid': return <LayoutGrid {...props} />;
+    case 'Wrench': return <Wrench {...props} />;
+    case 'Palette': return <Palette {...props} />;
+    case 'ShieldCheck': return <ShieldCheck {...props} />;
+    case 'Heart': return <Heart {...props} />;
+    case 'Award': return <Award {...props} />;
+    case 'Star': return <Star {...props} />;
+    default: return <LayoutGrid {...props} />;
+  }
+};
+
 export default function Services({ onOpenConsultation }: ServicesProps) {
+  const [serviceCategories, setServiceCategories] = useState<ServiceItem[]>(defaultServices);
+
   useEffect(() => {
     AOS.init({
       duration: 1000,
       once: false
     });
+    
+    const loadServices = async () => {
+      try {
+        const data = await dataStore.getServices();
+        if (data.length > 0) setServiceCategories(data);
+      } catch (err) {
+        console.error('Failed to load services:', err);
+      }
+    };
+    loadServices();
   }, []);
-
-  const serviceCategories = [
-    {
-      title: "Custom Modular Solutions & Carpentry",
-      tagline: "Precision Engineering & Bespoke Cabinets",
-      icon: <LayoutGrid className="w-8 h-8 text-gold" />,
-      image: "/image%20copy%207.png",
-      description: "We design and build clean modular structures tailored exactly to your space requirements. Using premium water-proof calibrated plywood and state of the art drawer accessories.",
-      includes: [
-        "Modular Kitchens (L-shaped, U-shaped, Parallel, Island)",
-        "Custom Wardrobes (Sliding doors, Swing doors, Loft cabinets)",
-        "Premium TV Entertainment units",
-        "Utility Storage & Crockery Solutions"
-      ]
-    },
-    {
-      title: "Turnkey Execution",
-      tagline: "Hassle-Free Construction & Complete Workmanship",
-      icon: <Wrench className="w-8 h-8 text-gold" />,
-      image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=800&q=80",
-      description: "Leave the heavy lifting to us. We manage everything from raw brick restructuring to fine painting. A dedicated supervisor monitors daily progress, maintaining premium quality standards.",
-      includes: [
-        "Civil work, tiling, kitchen counters modification",
-        "Electrical rewiring and premium ambient light layouts",
-        "False ceilings (Gypsum board, PVC partitions)",
-        "Professional painting (wall preparation, texture work, premium paints)",
-        "Lighting installations (COB, Profiles, LED Strips)",
-        "Post-execution professional deep cleaning"
-      ]
-    },
-    {
-      title: "Styling & Décor Consultation",
-      tagline: "Aesthetic Guidance & Soft Furnishings",
-      icon: <Palette className="w-8 h-8 text-gold" />,
-      image: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=800&q=80",
-      description: "Our senior design consultants help you curate materials, textures, and details that weave together into a luxury setting, aligning with your personal taste and comfort.",
-      includes: [
-        "Color Palette recommendations",
-        "Premium wallpaper design selections",
-        "Fabric curtains, blinds, and window dressings",
-        "Architectural lighting scheme mapping",
-        "Soft furnishings, carpets, and decor accents"
-      ]
-    }
-  ];
 
   return (
     <div className="pt-24 min-h-screen bg-offwhite">
@@ -78,7 +61,7 @@ export default function Services({ onOpenConsultation }: ServicesProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 space-y-24">
         {serviceCategories.map((service, index) => (
           <div 
-            key={index}
+            key={service.id}
             className={`grid grid-cols-1 lg:grid-cols-12 gap-12 items-center`}
             data-aos="fade-up"
           >
@@ -97,7 +80,7 @@ export default function Services({ onOpenConsultation }: ServicesProps) {
             <div className={`lg:col-span-7 space-y-6 ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
               <div className="flex items-center gap-3">
                 <div className="p-3 border border-gold/30 rounded bg-white shadow-sm">
-                  {service.icon}
+                  {renderIcon(service.icon)}
                 </div>
                 <div>
                   <span className="text-gold text-xs uppercase tracking-widest font-semibold font-poppins">{service.tagline}</span>
