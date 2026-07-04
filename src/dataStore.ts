@@ -47,6 +47,9 @@ export interface ContactDetails {
   mapEmbedUrl: string;
   whatsapp1: string;
   whatsapp2: string;
+  instagram?: string;
+  facebook?: string;
+  youtube?: string;
 }
 
 // Default Data Values matching current hardcoded content
@@ -310,7 +313,10 @@ export const defaultContactDetails: ContactDetails = {
   hours: "Monday - Sunday: 10:00 AM - 8:30 PM",
   mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3805.1585863261173!2d78.399993314878!3d17.485608388019623!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb90c055555555%3A0x7d0a2333d4ff3701!2sKukatpally%20Allwyn%20Colony%2C%20Hyderabad%2C%20Tailangana!5e0!3m2!1sen!2sin!4v1680000000000!5m2!1sen!2sin",
   whatsapp1: "916305093192",
-  whatsapp2: "917660994433"
+  whatsapp2: "917660994433",
+  instagram: "",
+  facebook: "",
+  youtube: ""
 };
 
 // Initialize Supabase Client
@@ -612,7 +618,10 @@ export const dataStore = {
       hours: data.hours,
       mapEmbedUrl: data.map_embed_url,
       whatsapp1: data.whatsapp1,
-      whatsapp2: data.whatsapp2
+      whatsapp2: data.whatsapp2,
+      instagram: data.instagram || '',
+      facebook: data.facebook || '',
+      youtube: data.youtube || ''
     };
   },
 
@@ -629,6 +638,9 @@ export const dataStore = {
         map_embed_url: details.mapEmbedUrl,
         whatsapp1: details.whatsapp1,
         whatsapp2: details.whatsapp2,
+        instagram: details.instagram || '',
+        facebook: details.facebook || '',
+        youtube: details.youtube || '',
         updated_at: new Date().toISOString()
       });
 

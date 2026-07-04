@@ -745,12 +745,6 @@ export default function Admin() {
             </button>
           </form>
 
-          {/* Quick Login Helper for the client/reviewer */}
-          <div className="border-t border-grey/15 pt-4 text-center">
-            <p className="text-[10px] text-grey-dark uppercase tracking-wider font-semibold">Reviewer Credentials Tip:</p>
-            <p className="text-[11px] text-gold/70 mt-1 font-poppins">Email: <code className="text-white">vcprojectstudio@gmail.com</code></p>
-            <p className="text-[11px] text-gold/70 font-poppins">Pass: <code className="text-white">admin123</code></p>
-          </div>
         </div>
       </div>
     );
@@ -1637,6 +1631,54 @@ export default function Admin() {
                         </button>
                       </div>
                     )}
+                  </div>
+
+                  <div className="space-y-3 pt-2 border-t border-grey/10">
+                    <h4 className="text-sm font-heading font-bold text-black flex items-center gap-2">
+                      🔗 Social Media Profile Links
+                      <span className="text-[10px] text-grey-dark font-normal normal-case tracking-normal font-poppins">(optional — leave blank to hide the button)</span>
+                    </h4>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="block text-xs uppercase tracking-wider text-grey-dark font-semibold flex items-center gap-1.5">
+                          <span className="text-base">📸</span> Instagram URL
+                        </label>
+                        <input
+                          type="url"
+                          placeholder="https://instagram.com/vcprojectstudio"
+                          className="w-full bg-offwhite border border-grey/25 focus:border-gold outline-none px-4 py-2 rounded text-sm text-black transition-all"
+                          value={contact.instagram || ''}
+                          onChange={e => setContact({ ...contact, instagram: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="block text-xs uppercase tracking-wider text-grey-dark font-semibold flex items-center gap-1.5">
+                          <span className="text-base">👤</span> Facebook URL
+                        </label>
+                        <input
+                          type="url"
+                          placeholder="https://facebook.com/vcprojectstudio"
+                          className="w-full bg-offwhite border border-grey/25 focus:border-gold outline-none px-4 py-2 rounded text-sm text-black transition-all"
+                          value={contact.facebook || ''}
+                          onChange={e => setContact({ ...contact, facebook: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="block text-xs uppercase tracking-wider text-grey-dark font-semibold flex items-center gap-1.5">
+                          <span className="text-base">🎬</span> YouTube Channel URL
+                        </label>
+                        <input
+                          type="url"
+                          placeholder="https://youtube.com/@vcprojectstudio"
+                          className="w-full bg-offwhite border border-grey/25 focus:border-gold outline-none px-4 py-2 rounded text-sm text-black transition-all"
+                          value={contact.youtube || ''}
+                          onChange={e => setContact({ ...contact, youtube: e.target.value })}
+                        />
+                      </div>
+                    </div>
                   </div>
 
                   <div className="pt-2 border-t border-grey/10">

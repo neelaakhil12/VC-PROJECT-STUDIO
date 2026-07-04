@@ -1,8 +1,30 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Mail, Phone, MapPin, Instagram, Facebook, ArrowUp } from 'lucide-react';
+import { Mail, Phone, MapPin, ArrowUp } from 'lucide-react';
 import { dataStore, defaultContactDetails } from '../dataStore';
 import type { ContactDetails } from '../dataStore';
+
+// Inline SVG icons for social platforms (Lucide doesn't have YouTube)
+const InstagramIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+  </svg>
+);
+
+const FacebookIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+  </svg>
+);
+
+const YouTubeIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+    <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
+    <polygon fill="currentColor" stroke="none" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/>
+  </svg>
+);
 
 export default function Footer() {
   const [contactInfo, setContactInfo] = useState<ContactDetails>(defaultContactDetails);
@@ -23,6 +45,27 @@ export default function Footer() {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const socialLinks = [
+    {
+      icon: <InstagramIcon />,
+      href: contactInfo.instagram || '',
+      label: 'Instagram',
+      show: true,
+    },
+    {
+      icon: <FacebookIcon />,
+      href: contactInfo.facebook || '',
+      label: 'Facebook',
+      show: true,
+    },
+    {
+      icon: <YouTubeIcon />,
+      href: contactInfo.youtube || '',
+      label: 'YouTube',
+      show: true,
+    },
+  ];
 
   return (
     <footer className="bg-black border-t border-gold/20 text-white pt-16 pb-8 relative overflow-hidden">
@@ -47,13 +90,26 @@ export default function Footer() {
             <p className="text-grey text-sm font-light leading-relaxed">
               Crafting premium luxury interiors that match your dreams and suit your budget. Affordable design, premium quality, unmatched execution.
             </p>
-            <div className="flex items-center gap-4 pt-2">
-              <a href="#" className="w-9 h-9 border border-grey/30 hover:border-gold hover:text-gold rounded flex items-center justify-center transition-all duration-300">
-                <Instagram className="w-4 h-4" />
-              </a>
-              <a href="#" className="w-9 h-9 border border-grey/30 hover:border-gold hover:text-gold rounded flex items-center justify-center transition-all duration-300">
-                <Facebook className="w-4 h-4" />
-              </a>
+
+            {/* Social Media Buttons */}
+            <div className="flex items-center gap-3 pt-2">
+              {socialLinks.map(({ icon, href, label }) => (
+                <a
+                  key={label}
+                  href={href || '#'}
+                  target={href ? '_blank' : undefined}
+                  rel="noreferrer"
+                  aria-label={label}
+                  title={label}
+                  className={`w-9 h-9 border rounded flex items-center justify-center transition-all duration-300 group/social ${
+                    href
+                      ? 'border-grey/30 hover:border-gold hover:text-gold text-grey'
+                      : 'border-grey/15 text-grey/30 cursor-default'
+                  }`}
+                >
+                  {icon}
+                </a>
+              ))}
             </div>
           </div>
 
@@ -61,21 +117,11 @@ export default function Footer() {
           <div>
             <h4 className="text-gold font-heading text-sm uppercase tracking-widest mb-6 font-semibold">Explore</h4>
             <ul className="space-y-3 text-sm text-grey">
-              <li>
-                <Link to="/" className="hover:text-white hover:pl-1 transition-all duration-300 font-light">Home</Link>
-              </li>
-              <li>
-                <Link to="/services" className="hover:text-white hover:pl-1 transition-all duration-300 font-light">Services</Link>
-              </li>
-              <li>
-                <Link to="/about" className="hover:text-white hover:pl-1 transition-all duration-300 font-light">Our Story</Link>
-              </li>
-              <li>
-                <Link to="/projects" className="hover:text-white hover:pl-1 transition-all duration-300 font-light">Recent Projects</Link>
-              </li>
-              <li>
-                <Link to="/contact" className="hover:text-white hover:pl-1 transition-all duration-300 font-light">Contact</Link>
-              </li>
+              <li><Link to="/" className="hover:text-white hover:pl-1 transition-all duration-300 font-light">Home</Link></li>
+              <li><Link to="/services" className="hover:text-white hover:pl-1 transition-all duration-300 font-light">Services</Link></li>
+              <li><Link to="/about" className="hover:text-white hover:pl-1 transition-all duration-300 font-light">Our Story</Link></li>
+              <li><Link to="/projects" className="hover:text-white hover:pl-1 transition-all duration-300 font-light">Recent Projects</Link></li>
+              <li><Link to="/contact" className="hover:text-white hover:pl-1 transition-all duration-300 font-light">Contact</Link></li>
             </ul>
           </div>
 
@@ -84,10 +130,10 @@ export default function Footer() {
             <h4 className="text-gold font-heading text-sm uppercase tracking-widest mb-6 font-semibold">Services</h4>
             <ul className="space-y-3 text-sm text-grey">
               <li className="font-light">Modular Kitchens</li>
-              <li className="font-light">Custom Wardrobes & TV Units</li>
-              <li className="font-light">Turnkey Civil & false ceiling</li>
-              <li className="font-light">Electrical & lighting Layouts</li>
-              <li className="font-light">Styling & Decor Consultation</li>
+              <li className="font-light">Custom Wardrobes &amp; TV Units</li>
+              <li className="font-light">Turnkey Civil &amp; false ceiling</li>
+              <li className="font-light">Electrical &amp; lighting Layouts</li>
+              <li className="font-light">Styling &amp; Decor Consultation</li>
             </ul>
           </div>
 
