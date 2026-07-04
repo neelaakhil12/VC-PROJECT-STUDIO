@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/send-reset-email",
+      "destination": "/api/send-reset-email.cjs"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
