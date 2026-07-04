@@ -70,7 +70,7 @@ export default function Footer() {
   const activeSocialLinks = socialLinks.filter(link => link.href && link.href.trim() !== '');
 
   return (
-    <footer className="bg-black border-t border-gold/20 text-white pt-16 pb-8 relative overflow-hidden">
+    <footer className="bg-white border-t border-gold/20 text-primary pt-16 pb-8 relative overflow-hidden">
       {/* Background soft glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[120px] pointer-events-none"></div>
 
@@ -80,16 +80,16 @@ export default function Footer() {
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2.5 group">
               <img 
-                src="/footer-logo.png" 
+                src="/logo.png" 
                 alt="Project Studio Logo" 
-                className="w-24 h-24 object-contain rounded transition-all duration-300 shadow" 
+                className="w-24 h-24 object-contain transition-all duration-300" 
               />
               <div className="flex flex-col">
-                <span className="font-heading text-2xl font-bold tracking-widest text-grey">PROJECT STUDIO</span>
-                <span className="text-[10px] uppercase tracking-[0.25em] text-gold font-poppins">Premium Interiors</span>
+                <span className="font-heading text-2xl font-bold tracking-widest text-primary">PROJECT STUDIO</span>
+                <span className="text-xs uppercase tracking-[0.25em] text-gold font-bold font-poppins">Premium Interiors</span>
               </div>
             </Link>
-            <p className="text-grey text-sm font-light leading-relaxed">
+            <p className="text-grey-dark text-sm font-light leading-relaxed">
               Crafting premium luxury interiors that match your dreams and suit your budget. Affordable design, premium quality, unmatched execution.
             </p>
 
@@ -117,19 +117,19 @@ export default function Footer() {
           {/* Quick Links */}
           <div>
             <h4 className="text-gold font-heading text-sm uppercase tracking-widest mb-6 font-semibold">Explore</h4>
-            <ul className="space-y-3 text-sm text-grey">
-              <li><Link to="/" className="hover:text-white hover:pl-1 transition-all duration-300 font-light">Home</Link></li>
-              <li><Link to="/services" className="hover:text-white hover:pl-1 transition-all duration-300 font-light">Services</Link></li>
-              <li><Link to="/about" className="hover:text-white hover:pl-1 transition-all duration-300 font-light">Our Story</Link></li>
-              <li><Link to="/projects" className="hover:text-white hover:pl-1 transition-all duration-300 font-light">Recent Projects</Link></li>
-              <li><Link to="/contact" className="hover:text-white hover:pl-1 transition-all duration-300 font-light">Contact</Link></li>
+            <ul className="space-y-3 text-sm text-grey-dark">
+              <li><Link to="/" className="hover:text-gold hover:pl-1 transition-all duration-300 font-light">Home</Link></li>
+              <li><Link to="/services" className="hover:text-gold hover:pl-1 transition-all duration-300 font-light">Services</Link></li>
+              <li><Link to="/about" className="hover:text-gold hover:pl-1 transition-all duration-300 font-light">Our Story</Link></li>
+              <li><Link to="/projects" className="hover:text-gold hover:pl-1 transition-all duration-300 font-light">Recent Projects</Link></li>
+              <li><Link to="/contact" className="hover:text-gold hover:pl-1 transition-all duration-300 font-light">Contact</Link></li>
             </ul>
           </div>
 
           {/* Services */}
           <div>
             <h4 className="text-gold font-heading text-sm uppercase tracking-widest mb-6 font-semibold">Services</h4>
-            <ul className="space-y-3 text-sm text-grey">
+            <ul className="space-y-3 text-sm text-grey-dark">
               <li className="font-light">Modular Kitchens</li>
               <li className="font-light">Custom Wardrobes &amp; TV Units</li>
               <li className="font-light">Turnkey Civil &amp; false ceiling</li>
@@ -141,7 +141,7 @@ export default function Footer() {
           {/* Contact Details */}
           <div>
             <h4 className="text-gold font-heading text-sm uppercase tracking-widest mb-6 font-semibold">Get In Touch</h4>
-            <ul className="space-y-4 text-sm text-grey font-light">
+            <ul className="space-y-4 text-sm text-grey-dark font-light">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-gold shrink-0 mt-0.5" />
                 <span>{contactInfo.location}</span>
@@ -149,19 +149,19 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-gold shrink-0 mt-0.5" />
                 <div className="flex flex-col gap-1">
-                  <a href={`tel:${contactInfo.phone1.replace(/\s+/g, '')}`} className="hover:text-white transition-colors">{contactInfo.phone1}</a>
-                  <a href={`tel:${contactInfo.phone2.replace(/\s+/g, '')}`} className="hover:text-white transition-colors">{contactInfo.phone2}</a>
+                  <a href={`tel:${contactInfo.phone1.replace(/\s+/g, '')}`} className="hover:text-gold transition-colors">{contactInfo.phone1}</a>
+                  <a href={`tel:${contactInfo.phone2.replace(/\s+/g, '')}`} className="hover:text-gold transition-colors">{contactInfo.phone2}</a>
                 </div>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-gold shrink-0" />
-                <a href={`mailto:${contactInfo.email}`} className="hover:text-white transition-colors">{contactInfo.email}</a>
+                <a href={`mailto:${contactInfo.email}`} className="hover:text-gold transition-colors">{contactInfo.email}</a>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-grey/20 pt-8 mt-12 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-grey font-light">
+        <div className="border-t border-grey/20 pt-8 mt-12 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-grey-dark font-light">
           <div>
             &copy; {new Date().getFullYear()} Project Studio. All rights reserved. Founded 2024.
           </div>
@@ -170,7 +170,7 @@ export default function Footer() {
           </div>
           <button 
             onClick={scrollToTop}
-            className="w-10 h-10 border border-gold/30 hover:border-gold hover:text-gold transition-all duration-300 rounded flex items-center justify-center"
+            className="w-10 h-10 border border-gold/30 hover:border-gold hover:text-gold transition-all duration-300 rounded flex items-center justify-center text-primary"
             aria-label="Scroll to top"
           >
             <ArrowUp className="w-5 h-5" />

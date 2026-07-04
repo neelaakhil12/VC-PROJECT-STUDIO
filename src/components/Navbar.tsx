@@ -42,11 +42,11 @@ export default function Navbar({ onOpenConsultation }: NavbarProps) {
               <img 
                 src="/logo.png" 
                 alt="Project Studio Logo" 
-                className={`object-contain transition-all duration-500 w-20 h-20 md:w-24 md:h-24 ${scrolled ? 'md:w-20 md:h-20' : ''}`} 
+                className={`object-contain transition-all duration-500 w-28 h-28 md:w-32 md:h-32 ${scrolled ? 'md:w-28 md:h-28' : ''}`} 
               />
               <div className="flex flex-col">
                 <span className={`font-heading font-bold tracking-widest text-black transition-all duration-500 text-lg md:text-xl ${scrolled ? 'md:text-lg' : ''}`}>PROJECT STUDIO</span>
-                <span className={`uppercase tracking-[0.25em] text-gold font-poppins transition-all duration-500 text-[8px] md:text-[9px] ${scrolled ? 'md:text-[8px]' : ''}`}>Premium Interiors</span>
+                <span className={`uppercase tracking-[0.25em] text-gold font-bold font-poppins transition-all duration-500 text-[10px] md:text-xs ${scrolled ? 'md:text-[10px]' : ''}`}>Premium Interiors</span>
               </div>
             </Link>
 
