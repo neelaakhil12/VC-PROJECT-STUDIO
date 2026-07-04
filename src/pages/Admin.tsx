@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { 
   LayoutGrid, Wrench, Trash2, Edit, Lock, User, Save, LogOut, 
   MapPin, ArrowLeft, Check, AlertCircle, Eye, RefreshCw,
-  PlusCircle
+  PlusCircle, Video
 } from 'lucide-react';
 import { dataStore, uploadToCloudinary, uploadVideoToCloudinary } from '../dataStore';
 import type { HomeSlide, ServiceItem, ProjectItem, BeforeAfterItem, ContactDetails, ProjectCategory } from '../dataStore';
@@ -95,12 +95,13 @@ export default function Admin() {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   // Active UI tab
-  const [activeTab, setActiveTab] = useState<'slides' | 'services' | 'projects' | 'beforeAfter' | 'contact'>('slides');
+  const [activeTab, setActiveTab] = useState<'slides' | 'services' | 'projects' | 'videos' | 'beforeAfter' | 'contact'>('slides');
 
   // Form states for adding/editing items
   const [slideForm, setSlideForm] = useState<Partial<HomeSlide> & { isEditing?: boolean }>({});
   const [serviceForm, setServiceForm] = useState<Partial<ServiceItem> & { isEditing?: boolean, includesText?: string }>({});
   const [projectForm, setProjectForm] = useState<Partial<ProjectItem> & { isEditing?: boolean }>({});
+  const [videoForm, setVideoForm] = useState<Partial<ProjectItem> & { isEditing?: boolean }>({});
   const [beforeAfterForm, setBeforeAfterForm] = useState<Partial<BeforeAfterItem> & { isEditing?: boolean }>({});
 
   // Loading / saving feedback state
@@ -440,7 +441,7 @@ export default function Admin() {
           category: projectForm.category!,
           img: projectForm.img!,
           desc: projectForm.desc || '',
-          videoUrl: projectForm.videoUrl || ''
+          videoUrl: ''
         };
         updatedProjects.push(newProject);
       }
@@ -469,6 +470,42 @@ export default function Admin() {
       }
     }
   };
+
+  const saveVideo = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!videoForm.title || !videoForm.category || !videoForm.img || !videoForm.videoUrl) {
+      showFeedback('Please fill all fields (Title, Category, Cover Image, and Video File/Link).', 'error');
+      return;
+    }
+
+    showFeedback('Saving video details...', 'success');
+
+    try {
+      let updatedProjects = [...projects];
+      if (videoForm.isEditing) {
+        updatedProjects = updatedProjects.map(p => p.id === videoForm.id ? (videoForm as ProjectItem) : p);
+      } else {
+        const newVideo: ProjectItem = {
+          id: `proj-${Date.now()}`,
+          title: videoForm.title!,
+          category: videoForm.category!,
+          img: videoForm.img!,
+          desc: videoForm.desc || '',
+          videoUrl: videoForm.videoUrl!
+        };
+        updatedProjects.push(newVideo);
+      }
+
+      await dataStore.setProjects(updatedProjects);
+      setProjects(updatedProjects);
+      setVideoForm({});
+      showFeedback('Video details saved successfully!', 'success');
+    } catch (err: any) {
+      console.error(err);
+      showFeedback(err.message || 'Failed to save video.', 'error');
+    }
+  };
+
 
   // -------------------------------------------------------------
   // BEFORE AFTER SHOWCASE ACTIONS
@@ -818,8 +855,19 @@ export default function Admin() {
               }`}
             >
               <LayoutGrid className="w-4 h-4 shrink-0" />
-              <span>Recent Projects ({projects.length})</span>
+              <span>Recent Projects ({projects.filter(p => !p.videoUrl).length})</span>
             </button>
+
+            <button 
+              onClick={() => { setActiveTab('videos'); setVideoForm({}); }}
+              className={`w-full text-left px-4 py-3 rounded text-sm font-semibold flex items-center gap-3 transition-all ${
+                activeTab === 'videos' ? 'bg-gold text-black shadow-sm font-bold' : 'hover:bg-gold/10 text-black/75 hover:text-black'
+              }`}
+            >
+              <Video className="w-4 h-4 shrink-0" />
+              <span>Project Videos ({projects.filter(p => p.videoUrl).length})</span>
+            </button>
+
 
             <button 
               onClick={() => { setActiveTab('beforeAfter'); setBeforeAfterForm({}); }}
@@ -1196,82 +1244,6 @@ export default function Admin() {
                       />
                     </div>
 
-                    <div className="space-y-1.5">
-                      <label className="block text-xs uppercase tracking-wider text-grey-dark font-semibold flex items-center gap-2">
-                        🎬 Project Video <span className="text-gold/60 font-normal normal-case tracking-normal">(Optional — upload MP4 or paste YouTube link)</span>
-                      </label>
-
-                      {/* File upload option */}
-                      <div className="flex flex-col gap-2">
-                        <input
-                          type="file"
-                          accept="video/mp4,video/webm,video/quicktime,video/*"
-                          className="w-full bg-offwhite border border-grey/25 focus:border-gold outline-none px-4 py-2 rounded text-sm text-black transition-all file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-gold/10 file:text-gold hover:file:bg-gold/20"
-                          onChange={async (e) => {
-                            const file = e.target.files?.[0];
-                            if (!file) return;
-                            try {
-                              showFeedback('Uploading video to Cloudinary...', 'success');
-                              setVideoUploadProgress(0);
-                              const url = await uploadVideoToCloudinary(file, (pct) => setVideoUploadProgress(pct));
-                              setProjectForm({ ...projectForm, videoUrl: url });
-                              setVideoUploadProgress(null);
-                              showFeedback('Video uploaded successfully!', 'success');
-                            } catch (err: any) {
-                              setVideoUploadProgress(null);
-                              showFeedback(err.message || 'Video upload failed.', 'error');
-                            }
-                          }}
-                        />
-
-                        {/* Progress bar */}
-                        {videoUploadProgress !== null && (
-                          <div className="w-full bg-grey/20 rounded-full h-2 overflow-hidden">
-                            <div
-                              className="h-2 bg-gold rounded-full transition-all duration-300"
-                              style={{ width: `${videoUploadProgress}%` }}
-                            />
-                          </div>
-                        )}
-                        {videoUploadProgress !== null && (
-                          <p className="text-[11px] text-gold font-poppins">{videoUploadProgress}% uploaded...</p>
-                        )}
-
-                        {/* OR paste YouTube URL */}
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-px bg-grey/20" />
-                          <span className="text-[10px] text-grey uppercase tracking-wider">or paste YouTube URL</span>
-                          <div className="flex-1 h-px bg-grey/20" />
-                        </div>
-                        <input
-                          type="url"
-                          placeholder="https://www.youtube.com/watch?v=VIDEO_ID"
-                          className="w-full bg-offwhite border border-grey/25 focus:border-gold outline-none px-4 py-2 rounded text-sm text-black transition-all"
-                          value={projectForm.videoUrl && !projectForm.videoUrl.includes('cloudinary') ? projectForm.videoUrl : ''}
-                          onChange={e => setProjectForm({ ...projectForm, videoUrl: e.target.value })}
-                        />
-                      </div>
-
-                      {/* Preview */}
-                      {projectForm.videoUrl && (
-                        <div className="mt-2 p-3 bg-black/5 border border-gold/20 rounded-lg flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center flex-shrink-0">
-                            <span className="text-gold text-base">🎬</span>
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-[11px] text-gold font-semibold font-poppins">✓ Video ready</p>
-                            <p className="text-[10px] text-grey-dark truncate max-w-xs">{projectForm.videoUrl}</p>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => setProjectForm({ ...projectForm, videoUrl: '' })}
-                            className="ml-auto text-grey-dark hover:text-red-500 text-xs font-bold flex-shrink-0"
-                          >
-                            ✕ Remove
-                          </button>
-                        </div>
-                      )}
-                    </div>
 
                     <div className="flex items-center gap-3 pt-2">
                       <button 
@@ -1339,9 +1311,9 @@ export default function Admin() {
 
                 {/* Projects directory grid */}
                 <div className="bg-white border border-grey/15 rounded-lg p-6 shadow-sm">
-                  <h3 className="text-lg font-heading font-bold text-black border-b border-grey/10 pb-3">Active Gallery Portfolio ({projects.length})</h3>
+                  <h3 className="text-lg font-heading font-bold text-black border-b border-grey/10 pb-3">Active Gallery Portfolio ({projects.filter(p => !p.videoUrl).length})</h3>
                   <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    {projects.map((p) => (
+                    {projects.filter(p => !p.videoUrl).map((p) => (
                       <div key={p.id} className="border border-grey/15 rounded-lg bg-offwhite flex flex-col justify-between overflow-hidden">
                         <div className="h-32 bg-black relative">
                           <img src={p.img} alt={p.title} className="w-full h-full object-cover" />
@@ -1356,6 +1328,212 @@ export default function Admin() {
                         <div className="p-3 bg-white border-t border-grey/10 flex justify-end gap-2">
                           <button 
                             onClick={() => setProjectForm({ ...p, isEditing: true })}
+                            className="p-1 bg-white border border-grey/25 text-grey-dark hover:text-gold hover:border-gold rounded transition-colors cursor-pointer"
+                          >
+                            <Edit className="w-3.5 h-3.5" />
+                          </button>
+                          <button 
+                            onClick={() => deleteProject(p.id)}
+                            className="p-1 bg-white border border-grey/25 text-grey-dark hover:text-red-500 hover:border-red-500 rounded transition-colors cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+            {/* -------------------------------------------------------------
+                TAB SHEET: PROJECT VIDEOS
+                ------------------------------------------------------------- */}
+            {activeTab === 'videos' && (
+              <div className="space-y-6">
+                
+                {/* Add/Edit Form block */}
+                <div className="bg-white border border-grey/15 rounded-lg p-6 shadow-sm">
+                  <h3 className="text-lg font-heading font-bold text-black border-b border-grey/10 pb-3 flex items-center gap-2">
+                    <PlusCircle className="w-5 h-5 text-gold" /> {videoForm.isEditing ? 'Edit Video Details' : 'Add New Project Video'}
+                  </h3>
+                  <form onSubmit={saveVideo} className="mt-4 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      
+                      <div className="space-y-1.5">
+                        <label className="block text-xs uppercase tracking-wider text-grey-dark font-semibold">Video Title</label>
+                        <input 
+                          type="text" 
+                          required
+                          placeholder="e.g. Modern Modular Kitchen Walkthrough"
+                          className="w-full bg-offwhite border border-grey/25 focus:border-gold outline-none px-4 py-2 rounded text-sm text-black transition-all"
+                          value={videoForm.title || ''}
+                          onChange={e => setVideoForm({ ...videoForm, title: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="block text-xs uppercase tracking-wider text-grey-dark font-semibold">Category Selection</label>
+                        <select 
+                          className="w-full bg-offwhite border border-grey/25 focus:border-gold outline-none px-4 py-2.5 rounded text-sm text-black transition-all"
+                          value={videoForm.category || ''}
+                          onChange={e => setVideoForm({ ...videoForm, category: e.target.value })}
+                          required
+                        >
+                          <option value="">-- Choose Category --</option>
+                          {categories.map(c => (
+                            <option key={c.id} value={c.name}>{c.name}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="block text-xs uppercase tracking-wider text-grey-dark font-semibold">Video Cover Image (Poster / Thumbnail)</label>
+                        <input 
+                          type="file" 
+                          accept="image/*"
+                          className="w-full bg-offwhite border border-grey/25 focus:border-gold outline-none px-4 py-2 rounded text-sm text-black transition-all file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-gold/10 file:text-gold hover:file:bg-gold/20"
+                          onChange={e => handleFileChange(e, (url) => setVideoForm({ ...videoForm, img: url }))}
+                        />
+                        {videoForm.img && (
+                          <div className="mt-2 h-20 w-32 bg-black rounded overflow-hidden border border-grey/20 relative">
+                            <img src={videoForm.img} alt="Preview" className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="block text-xs uppercase tracking-wider text-grey-dark font-semibold">Video Details Description</label>
+                      <textarea 
+                        rows={2}
+                        placeholder="Describe materials, size, layout details shown in the video..."
+                        className="w-full bg-offwhite border border-grey/25 focus:border-gold outline-none px-4 py-2 rounded text-sm text-black resize-none transition-all"
+                        value={videoForm.desc || ''}
+                        onChange={e => setVideoForm({ ...videoForm, desc: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="block text-xs uppercase tracking-wider text-grey-dark font-semibold flex items-center gap-2">
+                        🎬 Upload Video File or YouTube Link
+                      </label>
+
+                      {/* File upload option */}
+                      <div className="flex flex-col gap-2">
+                        <input
+                          type="file"
+                          accept="video/mp4,video/webm,video/quicktime,video/*"
+                          className="w-full bg-offwhite border border-grey/25 focus:border-gold outline-none px-4 py-2 rounded text-sm text-black transition-all file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-gold/10 file:text-gold hover:file:bg-gold/20"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            try {
+                              showFeedback('Uploading video to Cloudinary...', 'success');
+                              setVideoUploadProgress(0);
+                              const url = await uploadVideoToCloudinary(file, (pct) => setVideoUploadProgress(pct));
+                              setVideoForm({ ...videoForm, videoUrl: url });
+                              setVideoUploadProgress(null);
+                              showFeedback('Video uploaded successfully!', 'success');
+                            } catch (err: any) {
+                              setVideoUploadProgress(null);
+                              showFeedback(err.message || 'Video upload failed.', 'error');
+                            }
+                          }}
+                        />
+
+                        {/* Progress bar */}
+                        {videoUploadProgress !== null && (
+                          <div className="w-full bg-grey/20 rounded-full h-2 overflow-hidden">
+                            <div
+                              className="h-2 bg-gold rounded-full transition-all duration-300"
+                              style={{ width: `${videoUploadProgress}%` }}
+                            />
+                          </div>
+                        )}
+                        {videoUploadProgress !== null && (
+                          <p className="text-[11px] text-gold font-poppins">{videoUploadProgress}% uploaded...</p>
+                        )}
+
+                        {/* OR paste YouTube URL */}
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 h-px bg-grey/20" />
+                          <span className="text-[10px] text-grey uppercase tracking-wider">or paste YouTube URL</span>
+                          <div className="flex-1 h-px bg-grey/20" />
+                        </div>
+                        <input
+                          type="url"
+                          placeholder="https://www.youtube.com/watch?v=VIDEO_ID"
+                          className="w-full bg-offwhite border border-grey/25 focus:border-gold outline-none px-4 py-2 rounded text-sm text-black transition-all"
+                          value={videoForm.videoUrl && !videoForm.videoUrl.includes('cloudinary') ? videoForm.videoUrl : ''}
+                          onChange={e => setVideoForm({ ...videoForm, videoUrl: e.target.value })}
+                        />
+                      </div>
+
+                      {/* Preview */}
+                      {videoForm.videoUrl && (
+                        <div className="mt-2 p-3 bg-black/5 border border-gold/20 rounded-lg flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-gold/20 flex items-center justify-center flex-shrink-0">
+                            <span className="text-gold text-base">🎬</span>
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-[11px] text-gold font-semibold font-poppins">✓ Video ready</p>
+                            <p className="text-[10px] text-grey-dark truncate max-w-xs">{videoForm.videoUrl}</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setVideoForm({ ...videoForm, videoUrl: '' })}
+                            className="ml-auto text-grey-dark hover:text-red-500 text-xs font-bold flex-shrink-0"
+                          >
+                            ✕ Remove
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-3 pt-2">
+                      <button 
+                        type="submit"
+                        className="px-6 py-2.5 bg-black hover:bg-gold hover:text-black text-white font-semibold uppercase text-xs tracking-wider rounded transition-all duration-300 flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <Save className="w-3.5 h-3.5" /> {videoForm.isEditing ? 'Save Update' : 'Publish Video'}
+                      </button>
+                      {videoForm.isEditing && (
+                        <button 
+                          type="button" 
+                          onClick={() => setVideoForm({})}
+                          className="px-4 py-2.5 border border-grey/20 text-grey-dark hover:text-black hover:bg-grey/5 rounded text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer"
+                        >
+                          Cancel
+                        </button>
+                      )}
+                    </div>
+                  </form>
+                </div>
+
+                {/* Video Directory Grid */}
+                <div className="bg-white border border-grey/15 rounded-lg p-6 shadow-sm">
+                  <h3 className="text-lg font-heading font-bold text-black border-b border-grey/10 pb-3">Active Project Videos ({projects.filter(p => p.videoUrl).length})</h3>
+                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {projects.filter(p => p.videoUrl).map((p) => (
+                      <div key={p.id} className="border border-grey/15 rounded-lg bg-offwhite flex flex-col justify-between overflow-hidden">
+                        <div className="h-32 bg-black relative">
+                          <img src={p.img} alt={p.title} className="w-full h-full object-cover" />
+                          <span className="absolute top-2 left-2 px-2 py-0.5 bg-black/85 border border-gold/25 text-gold text-[9px] uppercase tracking-wider font-semibold rounded">
+                            {p.category}
+                          </span>
+                          <span className="absolute bottom-2 right-2 px-2 py-0.5 bg-gold text-black text-[9px] uppercase tracking-wider font-bold rounded">
+                            🎬 Video
+                          </span>
+                        </div>
+                        <div className="p-3 flex-grow">
+                          <h4 className="font-bold text-xs text-black line-clamp-1">{p.title}</h4>
+                          <p className="text-grey-dark text-[10px] font-light line-clamp-2 mt-1 leading-relaxed">{p.desc}</p>
+                        </div>
+                        <div className="p-3 bg-white border-t border-grey/10 flex justify-end gap-2">
+                          <button 
+                            onClick={() => setVideoForm({ ...p, isEditing: true })}
                             className="p-1 bg-white border border-grey/25 text-grey-dark hover:text-gold hover:border-gold rounded transition-colors cursor-pointer"
                           >
                             <Edit className="w-3.5 h-3.5" />

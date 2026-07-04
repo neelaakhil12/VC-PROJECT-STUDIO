@@ -63,7 +63,9 @@ export default function Projects() {
 
       const catsData = await dataStore.getProjectCategories();
       if (catsData.length > 0) {
-        setCategories(["All", ...catsData.map(c => c.name)]);
+        setCategories(["All", "Videos", ...catsData.map(c => c.name)]);
+      } else {
+        setCategories(["All", "Videos", "Modular Kitchen", "Living Room", "Bedroom", "Wardrobes"]);
       }
     } catch (err) {
       console.error('Failed to load portfolio projects from Supabase:', err);
@@ -72,8 +74,10 @@ export default function Projects() {
 
   // Filtered list
   const filteredProjects = filter === "All" 
-    ? projects 
-    : projects.filter(p => p.category === filter);
+    ? projects.filter(p => !p.videoUrl) 
+    : filter === "Videos"
+      ? projects.filter(p => p.videoUrl && p.videoUrl.trim() !== '')
+      : projects.filter(p => p.category === filter && !p.videoUrl);
 
   // Projects that have a video
   const projectsWithVideo = projects.filter(p => p.videoUrl && p.videoUrl.trim() !== '');
@@ -263,7 +267,13 @@ export default function Projects() {
             {filteredProjects.map((p, idx) => (
               <div 
                 key={p.id}
-                onClick={() => openLightbox(idx)}
+                onClick={() => {
+                  if (p.videoUrl) {
+                    setActiveVideo({ url: p.videoUrl, title: p.title });
+                  } else {
+                    openLightbox(idx);
+                  }
+                }}
                 className="bg-white rounded overflow-hidden shadow-sm group hover:shadow-xl hover:border-gold/30 border border-grey/10 transition-all duration-300 cursor-pointer flex flex-col h-full"
                 data-aos="zoom-in"
               >
